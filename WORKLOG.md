@@ -66,4 +66,6 @@
 - Email Routing kullanıcı tarafından açıldı (MX ×3, SPF, cf2024-1 DKIM). Hedef akdagkn@gmail.com doğrulanmış; kaan@livn.tr → Gmail kuralı mevcut.
 - Eklendi: `_dmarc.livn.tr TXT "v=DMARC1; p=none; rua=mailto:kaan@livn.tr"` (izleme modu). Değişiklik öncesi DNS yedeği alındı.
 - Site, vCard ve QR adresi kaan@livn.tr (A bölümüyle birlikte yayına girecek).
-- Resend (giden posta, Gmail "farklı adresten gönder"): api.resend.com ağ politikasında engelli → bekliyor.
+- Resend (giden posta): livn.tr alan adı (EU) doğrulandı. Eklenen DNS: `resend._domainkey` TXT (DKIM), `send` CNAME → send.forge.rmta.net, `rsend` CNAME → rsend-euw1.forge.rmta.net (proxy kapalı). Öncesinde DNS yedeği alındı.
+- Uçtan uca test: Resend ile kaan@livn.tr → kaan@livn.tr gönderildi, durum "delivered" (Cloudflare yönlendirmesiyle Gmail'e).
+- Kalan (kullanıcı): Gmail → "Postaları farklı adresten gönder" (smtp.resend.com:587, kullanıcı `resend`, yeni Sending access anahtarı); sohbette paylaşılan Resend anahtarı silinecek.

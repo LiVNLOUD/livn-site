@@ -19,7 +19,7 @@
   if (motion && (p === '/' || p === '/en/') && get('livn-boot') !== '1') root.classList.add('boot-pending');
 
   document.addEventListener('DOMContentLoaded', function () {
-    var btn = document.querySelector('.theme-btn');
+    var btn = document.querySelector('.theme-btn:not(.motion-btn)');
     if (btn) {
       btn.hidden = false;
       btn.addEventListener('click', function () {

@@ -42,7 +42,11 @@ function* htmlFiles(dir) {
 for (const f of htmlFiles(dist)) {
   const html = readFileSync(f, 'utf8');
   const rel = f.slice(dist.length);
-  if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(html)) errors.push(`${rel}: satır içi <script> (CSP engeller)`);
+  // JSON-LD veri bloğu çalıştırılmaz (CSP etkilemez) ama geçerli JSON olmalı
+  for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+    try { JSON.parse(m[1]); } catch { errors.push(`${rel}: geçersiz JSON-LD`); }
+  }
+  if (/<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>/i.test(html)) errors.push(`${rel}: satır içi <script> (CSP engeller)`);
   if (/<style[\s>]/i.test(html)) errors.push(`${rel}: satır içi <style> (CSP engeller)`);
   if (/\sstyle="/i.test(html)) errors.push(`${rel}: style="" özniteliği (CSP engeller)`);
   for (const m of html.matchAll(/<(?:script|link)[^>]+(?:src|href)="(https?:)?\/\/[^"]+"[^>]*>/gi)) {

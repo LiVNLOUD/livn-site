@@ -41,3 +41,13 @@
 - Şematik çizimlerde eksi etiket numarası hatası düzeltildi (işaretsiz kaydırma).
 - uBlock Origin "ClickFix" uyarısı: "Kopyala" düğmesi `irm … | iex` komutunu betikle panoya yazıyordu (kötü amaçlı sitelerin yöntemi). Düğme artık yalnız komutu seçiyor ("Seç"), kullanıcı Ctrl+C ile kopyalıyor; betikle panoya yazma yok.
 - Web Analytics: token'da Account Analytics yetkisi yok (API 10000) → açılmadı.
+
+### Keşke listesi — 1. aşama (2026-10-15)
+- Eğitim bölümü kaldırıldı (kullanıcı isteği).
+- İletişim bandı: "Yıldırım Kimya'daki görevimi sürdürüyorum; uygunluğum ölçüsünde teknik destek/danışmanlık" tonu.
+- Web Analytics kullanıcı tarafından açıldı; CSP'ye yalnız `static.cloudflareinsights.com` (script) ve `cloudflareinsights.com` (connect) eklendi.
+- JSON-LD: ana sayfa WebSite + Person, Hakkımda ProfilePage. Denetim JSON-LD'ye izin verir, geçerliliğini doğrular.
+- Kartvizit: `/kaan-akdag.vcf` (fotoğraflı) + Hakkımda'da QR (fotoğrafsız vCard, çevrimdışı çalışır). Telefon yalnız vCard/QR'da.
+- Notlar: 3 teknik yazı (loop check, S7-1500 program yapısı, WinCC alarm yönetimi), TR+EN, RSS (`/notlar/rss.xml`, `/en/notes/rss.xml`). Genel mühendislik pratikleri; kullanıcı gözden geçirecek.
+- Gizlilik sayfası: `/gizlilik/`, `/en/privacy/` (çerezsiz analitik, barındırma, KVKK md. 11).
+- kaan@livn.tr (Email Routing): token yetkisi yok → kullanıcı panelden ya da token'a izin ekleyerek.

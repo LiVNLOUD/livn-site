@@ -496,3 +496,8 @@ main { min-height: 50vh; }
 .contact-who { display: flex; gap: 20px; align-items: center; }
 .contact-who picture { flex: none; width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid var(--border-strong); }
 @media (max-width: 519px) { .contact-who { flex-direction: column; align-items: flex-start; } }
+
+/* Kartvizit QR */
+.vcard .qr { background: #fff; border-radius: 8px; padding: 8px; width: 180px; max-width: 100%; margin: 4px 0 12px; }
+.vcard .qr svg { display: block; width: 100%; height: auto; }
+.vcard-hint { font-size: .86rem; color: var(--muted); margin: 0 0 12px; }

@@ -1,0 +1,6 @@
+---
+// Arama motorları için yapılandırılmış veri (JSON-LD). Çalıştırılabilir betik değildir; CSP etkilemez.
+interface Props { data: object }
+const json = JSON.stringify(Astro.props.data).replace(/</g, '\\u003c');
+---
+<script type="application/ld+json" set:html={json} />

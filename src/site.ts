@@ -5,6 +5,11 @@ export const SITE = {
   github: 'https://github.com/LiVNLOUD',
   linkedin: 'https://www.linkedin.com/in/akdag-kaan/',
   email: 'akdagkn@gmail.com',
+  // Telefon: yalnız kartvizitte (vCard / QR) kullanılır, sayfalarda gösterilmez
+  phone: '+905321310733',
+  phoneDisplay: '+90 532 131 07 33',
+  employer: { name: 'Yıldırım Kimya', legal: 'Yıldırım Tuz Kimya San. ve Tic. A.Ş.', url: 'https://www.yildirimkimya.com.tr' },
+  jobTitle: { tr: 'Elektrik ve Otomasyon Sorumlusu', en: 'Electrical & Automation Lead' },
   // Kariyer başlangıcı: metinlerdeki {years} (deneyim yılı) buradan hesaplanır
   since: 2011,
   location: { tr: 'Bursa', en: 'Bursa, Türkiye' },

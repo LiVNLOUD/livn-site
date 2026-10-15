@@ -1,5 +1,6 @@
 ---
 import EmailLink from '../components/EmailLink.astro';
+import JsonLd from '../components/JsonLd.astro';
 import '../styles/global.css';
 import BrandMark from '../components/BrandMark.astro';
 import { SITE, otherLang, type Lang } from '../site';
@@ -15,8 +16,10 @@ interface Props {
   // Open Graph görseli (mutlak ya da kök göreli yol); yoksa /og.png
   image?: string;
   noindex?: boolean;
+  // Yapılandırılmış veri (JSON-LD)
+  jsonLd?: object;
 }
-const { lang, title, description, altPath, image, noindex = false } = Astro.props;
+const { lang, title, description, altPath, image, noindex = false, jsonLd } = Astro.props;
 const other = otherLang(lang);
 const ui = t(lang);
 const P = PATHS[lang];
@@ -60,6 +63,8 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
     <meta property="og:image" content={ogImage} />
     <meta property="og:locale" content={lang === 'tr' ? 'tr_TR' : 'en_US'} />
     <meta name="twitter:card" content="summary_large_image" />
+    {hasNotes && <link rel="alternate" type="application/rss+xml" title={`${SITE.name} — ${ui.nav.notes}`} href={P.rss} />}
+    {jsonLd && <JsonLd data={{ '@context': 'https://schema.org', ...jsonLd }} />}
   </head>
   <body>
     <a class="skip" href="#main">{ui.skip}</a>
@@ -93,6 +98,8 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
           <li><EmailLink /></li>
           <li><a href={SITE.linkedin} rel="noopener">LinkedIn</a></li>
           <li><a href={SITE.github} rel="noopener">GitHub</a></li>
+          {hasNotes && <li><a href={P.rss}>{ui.rss}</a></li>}
+          <li><a href={P.privacy}>{ui.privacy}</a></li>
         </ul>
         <p class="copy">© {new Date().getFullYear()} {SITE.name} · livn.tr</p>
       </div>

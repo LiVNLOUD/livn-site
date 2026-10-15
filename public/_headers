@@ -1,9 +1,17 @@
+# Güvenlik başlıkları. CSP bilinçli olarak dar tutulur:
+# - Betik/stil yalnız sitenin kendisinden ('self'); satır içi betik/stil yok.
+# - Tek istisna Cloudflare Web Analytics (çerezsiz): Pages'in eklediği beacon betiği
+#   static.cloudflareinsights.com'dan yüklenir ve ölçümleri cloudflareinsights.com'a gönderir.
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
 
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
+
+/kaan-akdag.vcf
+  Content-Type: text/vcard; charset=utf-8
+  Content-Disposition: attachment; filename="kaan-akdag.vcf"

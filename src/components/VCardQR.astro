@@ -1,0 +1,18 @@
+---
+// Kartvizit QR kodu: vCard'ı doğrudan içerir (internet gerekmeden rehbere eklenir). Derlemede SVG olarak üretilir.
+import QRCode from 'qrcode';
+import { vcard } from '../lib/vcard';
+import { t } from '../i18n';
+import type { Lang } from '../site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const ui = t(lang);
+const svg = (await QRCode.toString(vcard(lang, false), { type: 'svg', errorCorrectionLevel: 'M', margin: 2, color: { dark: '#15191c', light: '#ffffff' } }))
+  .replace('<svg ', `<svg role="img" aria-label="${ui.vcardTitle} QR" `);
+---
+<section class="side-card vcard" aria-labelledby="vc-h">
+  <h2 id="vc-h">{ui.vcardTitle}</h2>
+  <div class="qr" set:html={svg} />
+  <p class="vcard-hint">{ui.vcardHint}</p>
+  <a class="btn" href="/kaan-akdag.vcf" download>{ui.vcard}</a>
+</section>

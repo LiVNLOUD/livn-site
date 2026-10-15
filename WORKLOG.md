@@ -83,10 +83,11 @@
 - Ek bulgu: Cloudflare tarayıcı önbelleği `/theme.js` dosyasını 4 saat tutuyordu (eski betik + yeni HTML riski). Betik `src/scripts/theme-boot.js` oldu, `/_astro/theme-boot.[hash].js` olarak sunuluyor (değişince adı da değişir).
 - Yeni düğme `.theme-btn` sınıfını paylaştığı için tema düğmesi bir süre gizli kaldı; seçici düzeltildi. Canlıda doğrulandı: "hareketi azalt" açıkken düğme kapalı başlar, tıklayınca akış/harita/açılış çalışır; tema düğmesi görünür.
 
-### Ana sayfa: tek sahne "Sahadan koda" (2026-10-15, önizleme, onay bekliyor)
+### Ana sayfa: tek sahne "Sahadan koda" (2026-10-15)
 - Kullanıcı geri bildirimi: alt sayfalar beğenildi; ana sayfa dağınık (tüm bölümler bir arada, ziyaretçiyi içine çekmiyor). İstek: otomasyon, SCADA, elektrik-elektronik ve yazılımı bağlayan tek, sade, etkileyici bölüm.
 - Yeni ana sayfa tek sahne: başlık + bir seviye sinyalinin dört katmandaki karşılığı. Elektrik (4–20 mA ve ölçek) → Otomasyon (S7 ham değeri 0–27648, HI/LO merdiven basamakları) → SCADA (çubuk gösterge, alarm) → Yazılım (OPC UA okuması). Tümü tek `--lvl` değerinden.
 - Etkileşim: tank sürüklenir ya da ok tuşlarıyla değişir (gerçek `<input type=range>`, dikey); dokununca MAN'a geçer, OTO simülasyona döner. %80 üstü/%20 altı alarm tüm katmanlara yayılır (basamak enerjilenir, hat ve uçlar alarm rengine döner, JSON'da `alarm: "HI"`). "Değerler simülasyondur" notu.
 - Hareket: tek açılış (başlık → saha → hat çizilir → katmanlar sırayla), sonra hat boyunca sinyal akışı. Yalnız `:root.motion`; değer güncellemesi her durumda çalışır.
 - Kaldırılan: HMI paneli + proje kaydı, sayaçlar, "Ne yapıyorum", proje haritası (Referanslar'da duruyor), öne çıkan referanslar, sektörler, yazılım bandı, iletişim bandı, ilk ziyaret açılış ekranı (`boot-pending` mantığı `theme-boot.js`'ten çıkarıldı). Bunlara ait CSS ve kullanılmayan 19 i18n anahtarı silindi. `featured` alanı şemada kaldı, etkisiz (README'de not).
 - Doğrulama: derleme + site denetimi geçti; Playwright masaüstü/mobil, koyu/açık, TR/EN, hareket açık/kapalı; sürükleme, dokunma, OTO/MAN, HI/LO alarm; yatay taşma yok, konsol hatası yok.
+- Kullanıcı onayıyla `main` (bd70753) yayında. Canlı kontrol: `/` ve `/en/` yeni başlıkla, tüm bölüm sayfaları 200, 404, `/win` 301 → win.ps1; Playwright masaüstü/mobilde sürükleme, MAN/OTO ve HI alarmı çalışıyor, yatay taşma yok. Tek konsol hatası analitik betiğinin bu ortamın ağında engellenmesi (gerçek ziyaretçide oluşmaz).

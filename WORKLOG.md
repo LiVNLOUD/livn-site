@@ -69,3 +69,9 @@
 - Resend (giden posta): livn.tr alan adı (EU) doğrulandı. Eklenen DNS: `resend._domainkey` TXT (DKIM), `send` CNAME → send.forge.rmta.net, `rsend` CNAME → rsend-euw1.forge.rmta.net (proxy kapalı). Öncesinde DNS yedeği alındı.
 - Uçtan uca test: Resend ile kaan@livn.tr → kaan@livn.tr gönderildi, durum "delivered" (Cloudflare yönlendirmesiyle Gmail'e).
 - Kalan (kullanıcı): Gmail → "Postaları farklı adresten gönder" (smtp.resend.com:587, kullanıcı `resend`, yeni Sending access anahtarı); sohbette paylaşılan Resend anahtarı silinecek.
+
+### Yayın: A bölümü + kaan@livn.tr (2026-10-15)
+- Kullanıcı onayıyla `main` (5ecec40) yayında. Canlı kontrol: tüm bölüm sayfaları 200, 404, www, `/win` 301 (betik içeriği doğrulandı), vCard'da kaan@livn.tr, Cloudflare e-posta gizleme betiği yok.
+- Playwright (masaüstü + mobil): yatay kaydırma yok, sayfa hatası yok; açılış kalkıyor, harita zaman yolculuğu 2026'da "21 proje · 4 ülke" ile bitiyor, "Seç" düğmesi komutu seçiyor.
+- Lighthouse (canlı, mobil): performans 96–100, erişilebilirlik 100, SEO 100; best-practices 96 yalnız bu ortamın ağının analitik betiğini engellemesinden (gerçek ziyaretçide oluşmaz).
+- Kullanıcı Gmail "farklı adresten gönder" ayarını tamamladı.

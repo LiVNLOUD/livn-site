@@ -1,5 +1,5 @@
 // Ana sayfa etkileşimleri: açılış (ilk ziyaret), sayaçlar, HMI simülasyonu.
-// Açılış yalnız <html class="motion"> iken çalışır (bkz. public/theme.js).
+// Açılış yalnız <html class="motion"> iken çalışır (bkz. src/scripts/theme-boot.js).
 // HMI değerleri ve sayaçlar hareket değil veri değişimidir; her durumda çalışır.
 
 // --- A7: İlk ziyarette kısa "devreye alma" açılışı ---

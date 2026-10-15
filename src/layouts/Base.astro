@@ -1,6 +1,8 @@
 ---
 import EmailLink from '../components/EmailLink.astro';
 import JsonLd from '../components/JsonLd.astro';
+// Tema/hareket betiği: adında içerik hash'i olur, böylece tarayıcı önbelleği eski sürümü kullanamaz
+import themeBootUrl from '../scripts/theme-boot.js?url';
 import '../styles/global.css';
 import BrandMark from '../components/BrandMark.astro';
 import { SITE, otherLang, type Lang } from '../site';
@@ -45,7 +47,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <script is:inline src="/theme.js"></script>
+    <script is:inline src={themeBootUrl}></script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex" />}

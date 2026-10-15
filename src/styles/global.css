@@ -504,7 +504,7 @@ main { min-height: 50vh; }
 
 /* =====================================================================
    Hareket katmanı (A bölümü). Kural: animasyonlar yalnız <html class="motion"> iken çalışır.
-   Sınıfı public/theme.js koyar: sitedeki "Animasyonlar" düğmesi > işletim sisteminin "hareketi azalt" ayarı;
+   Sınıfı src/scripts/theme-boot.js koyar: sitedeki "Animasyonlar" düğmesi > işletim sisteminin "hareketi azalt" ayarı;
    kaydırmaya bağlı animasyonlar yalnız destekleyen tarayıcılarda çalışır (@supports),
    diğerlerinde içerik doğrudan son hâliyle görünür.
    ===================================================================== */

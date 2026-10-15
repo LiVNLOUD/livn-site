@@ -34,3 +34,10 @@
 - Tarihler kullanıcıdan: Sistemas 2020-10 – 2026-02, Yıldırım Kimya 2026-02 –; CN/MN projesi 2026 (ay belirtilmedi).
 - Geotek dönemi (Ağsu, Şenpiliç): Mitsubishi Electric PLC (kullanıcı onayı). Portre kullanıcıdan (src/assets/portre.jpg).
 - Lighthouse (yerel, mobil): /, /referanslar/, detay → 95–100 / 100 / 100 / 100.
+
+### Yayın (2026-10-15)
+- Kullanıcı onayıyla Pages `root_dir` boşaltıldı, `main`'e gönderildi; Cloudflare derlemesi başarılı. Canlı kontrol: `/`, `/en/`, `/referanslar/`, detay sayfaları, 404, `www`, `/win` (301 → win.ps1, betik içeriği doğrulandı), CSP başlığı; Playwright mobil/masaüstü ekran görüntüleri incelendi.
+- Cloudflare "Email Address Obfuscation" mailto bağlantılarını değiştirip betik ekliyordu; betik SVG bağlantılarında hata veriyordu → `EmailLink` bileşeni (`<!--email_off-->`), denetime kural eklendi. Zone ayarına dokunulmadı.
+- Şematik çizimlerde eksi etiket numarası hatası düzeltildi (işaretsiz kaydırma).
+- uBlock Origin "ClickFix" uyarısı: "Kopyala" düğmesi `irm … | iex` komutunu betikle panoya yazıyordu (kötü amaçlı sitelerin yöntemi). Düğme artık yalnız komutu seçiyor ("Seç"), kullanıcı Ctrl+C ile kopyalıyor; betikle panoya yazma yok.
+- Web Analytics: token'da Account Analytics yetkisi yok (API 10000) → açılmadı.

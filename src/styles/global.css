@@ -359,7 +359,8 @@ p { text-wrap: pretty; }
 .cmd { margin: 0 0 18px; }
 .cmd-row { display: flex; align-items: center; gap: 10px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 8px 8px 14px; }
 .cmd-prompt { font-family: var(--mono); color: var(--faint); user-select: none; }
-.cmd-text { font-family: var(--mono); font-size: .98rem; flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; color: var(--text); }
+.cmd-text { font-family: var(--mono); font-size: .98rem; flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; color: var(--text); user-select: all; -webkit-user-select: all; cursor: text; border-radius: 4px; }
+.cmd-text::selection { background: var(--accent); color: var(--accent-ink); }
 .cmd-btn { font: 600 .88rem var(--sans); background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 6px; min-height: 38px; padding: 0 14px; cursor: pointer; flex-shrink: 0; }
 .cmd-btn:hover { background: var(--accent-strong); }
 .cmd-status { min-height: 1.2em; margin: 6px 0 0; font-size: .85rem; color: var(--ok); }

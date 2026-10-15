@@ -63,7 +63,7 @@ draft: false                              # true ise yayınlanmaz
 
 ### Yeni yazılım projesi
 
-`src/content/software/<ad>/tr.md` ve `en.md`. Örnek: `src/content/software/livn-tools/`. Alanlar: `title`, `summary`, `order`, `status` (active | dev | archived), `version`, `platform`, `repo` (GitHub adresi), `command` + `commandNote` (kopyalanabilir kurulum komutu), `links`, `cover`, `gallery`.
+`src/content/software/<ad>/tr.md` ve `en.md`. Örnek: `src/content/software/livn-tools/`. Alanlar: `title`, `summary`, `order`, `status` (active | dev | archived), `version`, `platform`, `repo` (GitHub adresi), `command` + `commandNote` (kurulum komutu kutusu; "Seç" düğmesi komutu seçer, kullanıcı Ctrl+C ile kopyalar — komut betikle panoya yazılmaz, bkz. `CopyCommand.astro`), `links`, `cover`, `gallery`.
 
 ### Yeni not / yazı
 

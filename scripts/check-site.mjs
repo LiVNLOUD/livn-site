@@ -54,6 +54,9 @@ for (const f of htmlFiles(dist)) {
   if (!/<title>[^<]+<\/title>/.test(html)) errors.push(`${rel}: <title> yok`);
   if (!/<meta name="description" content="[^"]+"/.test(html)) errors.push(`${rel}: description yok`);
   if (!/<meta property="og:image" content="https:\/\/[^"]+"/.test(html)) errors.push(`${rel}: og:image yok`);
+  // Cloudflare e-posta gizleme betiği eklenmesin: her mailto <!--email_off--> içinde olmalı (EmailLink bileşeni)
+  const bare = html.replace(/<!--email_off-->[\s\S]*?<!--\/email_off-->/g, '');
+  if (/href="mailto:/i.test(bare)) errors.push(`${rel}: <!--email_off--> dışında mailto bağlantısı (EmailLink bileşenini kullanın)`);
   // 5) Kırık iç bağlantı
   for (const m of html.matchAll(/\shref="(\/[^"#?]*)/g)) {
     const href = decodeURIComponent(m[1]);

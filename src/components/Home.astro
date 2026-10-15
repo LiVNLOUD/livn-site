@@ -1,4 +1,5 @@
 ---
+import EmailLink from './EmailLink.astro';
 import Base from '../layouts/Base.astro';
 import CopyCommand from './CopyCommand.astro';
 import ReferenceCard from './ReferenceCard.astro';
@@ -166,7 +167,7 @@ const ym = (y: number, m?: number) => (m ? `${y}·${String(m).padStart(2, '0')}`
           <div><h2 id="contact-h">{ui.contactTitle}</h2><p>{ui.contactLead}</p></div>
         </div>
         <div class="btns">
-          <a class="btn btn-primary" href={`mailto:${SITE.email}`}>{ui.email}</a>
+          <EmailLink class="btn btn-primary" label={ui.email} />
           <a class="btn" href={SITE.linkedin} rel="noopener">LinkedIn</a>
         </div>
       </div>

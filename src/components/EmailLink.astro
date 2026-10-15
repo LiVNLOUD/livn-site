@@ -1,0 +1,11 @@
+---
+// E-posta bağlantısı. Cloudflare'in "Email Address Obfuscation" özelliği mailto bağlantılarını
+// /cdn-cgi/... adresine çevirip sayfaya satır dışı bir betik ekler; bu betik SVG bağlantılarında hata verir.
+// <!--email_off--> işaretleri Cloudflare'e bu bölümü değiştirmemesini söyler.
+import { SITE } from '../site';
+interface Props { class?: string; label?: string }
+const { class: cls, label } = Astro.props;
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+const html = `<!--email_off--><a${cls ? ` class="${esc(cls)}"` : ''} href="mailto:${esc(SITE.email)}">${esc(label ?? SITE.email)}</a><!--/email_off-->`;
+---
+<Fragment set:html={html} />

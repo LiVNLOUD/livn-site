@@ -1,4 +1,5 @@
 ---
+import EmailLink from './EmailLink.astro';
 import { getEntry, render } from 'astro:content';
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
@@ -50,7 +51,7 @@ const portrait = Object.values(portraits)[0]?.default;
         <section class="side-card contact-list" id="contact" aria-labelledby="c-h">
           <h2 id="c-h">{ui.contact}</h2>
           <ul>
-            <li><span class="sub">{ui.email}</span><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+            <li><span class="sub">{ui.email}</span><EmailLink /></li>
             <li><span class="sub">LinkedIn</span><a href={SITE.linkedin} rel="noopener">linkedin.com/in/akdag-kaan</a></li>
             <li><span class="sub">GitHub</span><a href={SITE.github} rel="noopener">github.com/LiVNLOUD</a></li>
             <li><span class="sub">{ui.location}</span>{SITE.location[lang]}</li>

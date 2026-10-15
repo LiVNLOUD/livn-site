@@ -4,7 +4,7 @@ export const SITE = {
   url: 'https://livn.tr',
   github: 'https://github.com/LiVNLOUD',
   linkedin: 'https://www.linkedin.com/in/akdag-kaan/',
-  email: 'akdagkn@gmail.com',
+  email: 'kaan@livn.tr',
   // Telefon: yalnız kartvizitte (vCard / QR) kullanılır, sayfalarda gösterilmez
   phone: '+905321310733',
   phoneDisplay: '+90 532 131 07 33',

@@ -61,3 +61,9 @@
 - A6 14 çizim türü (`schematic` alanı), detay sayfasında devreye alma sırası + "DEVREYE ALINIYOR… → ÇALIŞIYOR".
 - A7 ilk ziyaret açılışı: karar `theme.js` içinde (çizimden önce), 1,4 sn, tıkla/tuşla atlanır, CSS ile 2,6 sn'de kendiliğinden kalkar.
 - Hepsi `prefers-reduced-motion` ile kapanır. Lighthouse (yerel, mobil): 96–100 / 100 / 100 / 100; CLS ≈ 0, TBT 0 ms.
+
+### E-posta (2026-10-15)
+- Email Routing kullanıcı tarafından açıldı (MX ×3, SPF, cf2024-1 DKIM). Hedef akdagkn@gmail.com doğrulanmış; kaan@livn.tr → Gmail kuralı mevcut.
+- Eklendi: `_dmarc.livn.tr TXT "v=DMARC1; p=none; rua=mailto:kaan@livn.tr"` (izleme modu). Değişiklik öncesi DNS yedeği alındı.
+- Site, vCard ve QR adresi kaan@livn.tr (A bölümüyle birlikte yayına girecek).
+- Resend (giden posta, Gmail "farklı adresten gönder"): api.resend.com ağ politikasında engelli → bekliyor.

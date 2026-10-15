@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://livn.tr/sitemap-index.xml

@@ -1,0 +1,4 @@
+# Livn Tools kurulum betigi. Asil yonlendirme Cloudflare'deki kuraldir (301);
+# bu satir, o kural kaldirilirsa da "irm livn.tr/win | iex" calismaya devam etsin diye vardir.
+# DEGISTIRMEYIN: kullanicilarin komutu bu adrese baglidir.
+/win  https://raw.githubusercontent.com/LiVNLOUD/livn-tools/main/win.ps1  302

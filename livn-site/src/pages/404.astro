@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import { UI } from '../i18n';
+---
+<Base lang="tr" title={UI.tr.notFoundTitle} description={UI.tr.notFoundText}>
+  <section class="hero">
+    <h1>404</h1>
+    <p class="lead">{UI.tr.notFoundTitle}. {UI.tr.notFoundText} <a href="/">{UI.tr.backHome}</a></p>
+    <p class="lead" lang="en">{UI.en.notFoundTitle}. {UI.en.notFoundText} <a href="/en/">{UI.en.backHome}</a></p>
+  </section>
+</Base>

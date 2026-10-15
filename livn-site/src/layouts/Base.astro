@@ -1,0 +1,55 @@
+---
+import '../styles/global.css';
+import { SITE, type Lang } from '../site';
+import { t, PATHS } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  title?: string;
+  description: string;
+  // Diğer dildeki karşılığı (yoksa o dilin ana sayfası)
+  altPath?: string;
+}
+const { lang, title, description, altPath } = Astro.props;
+const other: Lang = lang === 'tr' ? 'en' : 'tr';
+const ui = t(lang);
+const fullTitle = title ? `${title} · ${SITE.name}` : SITE.name;
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+const altHref = altPath ?? PATHS[other].home;
+const trHref = new URL(lang === 'tr' ? Astro.url.pathname : altHref, SITE.url).href;
+const enHref = new URL(lang === 'en' ? Astro.url.pathname : altHref, SITE.url).href;
+---
+<!doctype html>
+<html lang={ui.htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="tr" href={trHref} />
+    <link rel="alternate" hreflang="en" href={enHref} />
+    <link rel="alternate" hreflang="x-default" href={trHref} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === 'tr' ? 'tr_TR' : 'en_US'} />
+  </head>
+  <body>
+    <a class="skip" href="#main">{ui.skip}</a>
+    <header class="top wrap">
+      <a class="brand" href={PATHS[lang].home}>{SITE.name}</a>
+      <a class="lang" href={altHref} hreflang={other} lang={other}>{ui.switchLang}</a>
+    </header>
+    <main id="main" class="wrap">
+      <slot />
+    </main>
+    <footer class="foot wrap">
+      <a href={SITE.github} rel="noopener">GitHub</a>
+      <span>© {new Date().getFullYear()} {SITE.name}</span>
+    </footer>
+  </body>
+</html>

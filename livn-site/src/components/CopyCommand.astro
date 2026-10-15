@@ -1,0 +1,41 @@
+---
+import { t } from '../i18n';
+import type { Lang } from '../site';
+interface Props { command: string; note?: string; lang: Lang }
+const { command, note, lang } = Astro.props;
+const ui = t(lang);
+---
+<div class="cmd" data-copied={ui.copied} data-failed={ui.copyFailed} data-label={ui.copy}>
+  <div class="cmd-row">
+    <span class="cmd-prompt" aria-hidden="true">PS&gt;</span>
+    <code class="cmd-text">{command}</code>
+    <button type="button" class="cmd-btn">{ui.copy}</button>
+  </div>
+  <p class="cmd-status" role="status" aria-live="polite"></p>
+  {note && <p class="cmd-note">{note}</p>}
+</div>
+
+<script>
+  for (const box of document.querySelectorAll<HTMLElement>('.cmd')) {
+    const btn = box.querySelector<HTMLButtonElement>('.cmd-btn');
+    const code = box.querySelector<HTMLElement>('.cmd-text');
+    const status = box.querySelector<HTMLElement>('.cmd-status');
+    if (!btn || !code || !status) continue;
+    btn.addEventListener('click', async () => {
+      const text = code.textContent ?? '';
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.textContent = box.dataset.copied ?? 'OK';
+        status.textContent = box.dataset.copied ?? '';
+      } catch {
+        const range = document.createRange();
+        range.selectNodeContents(code);
+        const sel = window.getSelection();
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+        status.textContent = box.dataset.failed ?? '';
+      }
+      window.setTimeout(() => { btn.textContent = box.dataset.label ?? ''; status.textContent = ''; }, 2000);
+    });
+  }
+</script>

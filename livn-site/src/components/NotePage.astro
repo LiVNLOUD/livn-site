@@ -1,0 +1,23 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import type { Lang } from '../site';
+import { t, PATHS, formatDate } from '../i18n';
+import { getNotes, slugOf } from '../content-utils';
+
+interface Props { lang: Lang; note: CollectionEntry<'notes'> }
+const { lang, note } = Astro.props;
+const ui = t(lang);
+const { Content } = await render(note);
+const other: Lang = lang === 'tr' ? 'en' : 'tr';
+const twin = (await getNotes(other)).find((n) => slugOf(n.id) === slugOf(note.id));
+const altPath = twin ? PATHS[other].note(slugOf(twin.id)) : PATHS[other].home;
+---
+<Base lang={lang} title={note.data.title} description={note.data.summary ?? note.data.title} altPath={altPath}>
+  <article class="note">
+    <p class="back"><a href={PATHS[lang].home}>← {ui.backHome}</a></p>
+    <h1>{note.data.title}</h1>
+    <p class="meta">{ui.published}: <time datetime={note.data.date.toISOString().slice(0, 10)}>{formatDate(note.data.date, lang)}</time></p>
+    <div class="prose"><Content /></div>
+  </article>
+</Base>

@@ -1,0 +1,60 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import CopyCommand from './CopyCommand.astro';
+import { SITE, type Lang } from '../site';
+import { t, PATHS, formatDate } from '../i18n';
+import { getProjects, getNotes, slugOf } from '../content-utils';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const ui = t(lang);
+const intro = SITE.intro[lang];
+const projects = await getProjects(lang);
+const rendered = await Promise.all(projects.map(async (p) => ({ p, Content: (await render(p)).Content })));
+const notes = (await getNotes(lang)).slice(0, 10);
+const statusText = { active: ui.statusActive, dev: ui.statusDev, archived: ui.statusArchived } as const;
+---
+<Base lang={lang} description={intro.lead}>
+  <section class="hero">
+    <h1>{intro.title}</h1>
+    <p class="lead">{intro.lead}</p>
+  </section>
+
+  {rendered.length > 0 && (
+    <section aria-labelledby="projects-h">
+      <h2 id="projects-h" class="section-h">{ui.projects}</h2>
+      {rendered.map(({ p, Content }) => (
+        <article class="project" id={slugOf(p.id)}>
+          <header class="project-head">
+            <h3>{p.data.title}</h3>
+            <span class={`badge badge-${p.data.status}`}>{statusText[p.data.status]}</span>
+          </header>
+          <p class="project-summary">{p.data.summary}</p>
+          {p.data.command && <CopyCommand command={p.data.command} note={p.data.commandNote} lang={lang} />}
+          <div class="prose"><Content /></div>
+          {p.data.links.length > 0 && (
+            <ul class="links">
+              {p.data.links.map((l) => <li><a href={l.href} rel="noopener">{l.label}</a></li>)}
+            </ul>
+          )}
+        </article>
+      ))}
+    </section>
+  )}
+
+  {notes.length > 0 && (
+    <section aria-labelledby="notes-h">
+      <h2 id="notes-h" class="section-h">{ui.notes}</h2>
+      <ul class="notes">
+        {notes.map((n) => (
+          <li>
+            <a href={PATHS[lang].note(slugOf(n.id))}>{n.data.title}</a>
+            <time datetime={n.data.date.toISOString().slice(0, 10)}>{formatDate(n.data.date, lang)}</time>
+            {n.data.summary && <p>{n.data.summary}</p>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</Base>

@@ -1,23 +1,31 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
+import { Picture, getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import type { Lang } from '../site';
+import { otherLang, type Lang } from '../site';
 import { t, PATHS, formatDate } from '../i18n';
-import { getNotes, slugOf } from '../content-utils';
-
-interface Props { lang: Lang; note: CollectionEntry<'notes'> }
-const { lang, note } = Astro.props;
+import { twinOf, slugOf } from '../content-utils';
+interface Props { lang: Lang; entry: CollectionEntry<'notes'> }
+const { lang, entry } = Astro.props;
 const ui = t(lang);
-const { Content } = await render(note);
-const other: Lang = lang === 'tr' ? 'en' : 'tr';
-const twin = (await getNotes(other)).find((n) => slugOf(n.id) === slugOf(note.id));
-const altPath = twin ? PATHS[other].note(slugOf(twin.id)) : PATHS[other].home;
+const P = PATHS[lang];
+const d = entry.data;
+const { Content } = await render(entry);
+const other = otherLang(lang);
+const twin = await twinOf('notes', entry, other);
+const altPath = twin ? PATHS[other].note(slugOf(twin.id)) : PATHS[other].notes;
+const og = d.cover ? (await getImage({ src: d.cover.src, width: 1200, height: 630, fit: 'cover', format: 'jpg' })).src : undefined;
 ---
-<Base lang={lang} title={note.data.title} description={note.data.summary ?? note.data.title} altPath={altPath}>
-  <article class="note">
-    <p class="back"><a href={PATHS[lang].home}>← {ui.backHome}</a></p>
-    <h1>{note.data.title}</h1>
-    <p class="meta">{ui.published}: <time datetime={note.data.date.toISOString().slice(0, 10)}>{formatDate(note.data.date, lang)}</time></p>
+<Base lang={lang} title={d.title} description={d.summary ?? d.title} altPath={altPath} image={og}>
+  <article class="wrap wrap-narrow">
+    <header class="page-head">
+      <p class="crumbs"><a href={P.home}>{ui.home}</a> / <a href={P.notes}>{ui.nav.notes}</a></p>
+      <h1>{d.title}</h1>
+      <p class="note-meta">{ui.published}: <time datetime={d.date.toISOString().slice(0, 10)}>{formatDate(d.date, lang)}</time></p>
+    </header>
+    {d.cover && <figure class="cover"><Picture src={d.cover.src} alt={d.cover.alt} widths={[640, 960, 1280]} sizes="(min-width: 780px) 724px, 100vw" formats={['avif', 'webp']} /></figure>}
     <div class="prose"><Content /></div>
+    <p><a class="more" href={P.notes}>{ui.backToNotes}</a></p>
+    <div class="section"></div>
   </article>
 </Base>

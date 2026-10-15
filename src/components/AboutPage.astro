@@ -1,0 +1,59 @@
+---
+import { getEntry, render } from 'astro:content';
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Base from '../layouts/Base.astro';
+import { SITE, otherLang, type Lang } from '../site';
+import { t, PATHS, formatPeriod } from '../i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const ui = t(lang);
+const P = PATHS[lang];
+const entry = await getEntry('about', lang);
+if (!entry) throw new Error(`src/content/about/${lang}.md yok`);
+const d = entry.data;
+const { Content } = await render(entry);
+// Portre (isteğe bağlı): src/assets/portre.jpg | .png | .webp
+const portraits = import.meta.glob<{ default: ImageMetadata }>('../assets/portre.{jpg,jpeg,png,webp}', { eager: true });
+const portrait = Object.values(portraits)[0]?.default;
+---
+<Base lang={lang} title={d.title} description={d.lead} altPath={PATHS[otherLang(lang)].about}>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href={P.home}>{ui.home}</a> / {ui.nav.about}</p>
+      <h1>{SITE.name}</h1>
+      <p class="lead">{d.lead}</p>
+    </header>
+    <div class="about-grid">
+      <div>
+        <div class="prose"><Content /></div>
+        <h2 class="section-title">{ui.experience}</h2>
+        <ol class="timeline">
+          {d.experience.map((x) => (
+            <li>
+              <span class="period">{formatPeriod(x.from, lang)} – {x.to ? formatPeriod(x.to, lang) : ui.present}</span>
+              <h3>{x.role}</h3>
+              {(x.company || x.location) && <p class="org">{[x.company, x.location].filter(Boolean).join(' · ')}</p>}
+              {x.points.length > 0 && <ul>{x.points.map((p) => <li>{p}</li>)}</ul>}
+            </li>
+          ))}
+        </ol>
+      </div>
+      <aside>
+        {portrait && <figure class="portrait"><Picture src={portrait} alt={SITE.name} widths={[360, 720]} sizes="360px" formats={['avif', 'webp']} /></figure>}
+        <section class="side-card contact-list" id="contact" aria-labelledby="c-h">
+          <h2 id="c-h">{ui.contact}</h2>
+          <ul>
+            <li><span class="sub">{ui.email}</span><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+            <li><span class="sub">LinkedIn</span><a href={SITE.linkedin} rel="noopener">linkedin.com/in/akdag-kaan</a></li>
+            <li><span class="sub">GitHub</span><a href={SITE.github} rel="noopener">github.com/LiVNLOUD</a></li>
+            <li><span class="sub">{ui.location}</span>{SITE.location[lang]}</li>
+          </ul>
+        </section>
+        {d.tools.length > 0 && <section class="side-card" aria-labelledby="t-h"><h2 id="t-h">{ui.tools}</h2><ul>{d.tools.map((x) => <li>{x}</li>)}</ul></section>}
+        {d.education.length > 0 && <section class="side-card" aria-labelledby="e-h"><h2 id="e-h">{ui.education}</h2><ul>{d.education.map((x) => <li>{x.title}{(x.period || x.note) && <span class="sub">{[x.period, x.note].filter(Boolean).join(' · ')}</span>}</li>)}</ul></section>}
+        {d.languages.length > 0 && <section class="side-card" aria-labelledby="l-h"><h2 id="l-h">{ui.languages}</h2><ul>{d.languages.map((x) => <li>{x.name}<span class="sub">{x.level}</span></li>)}</ul></section>}
+      </aside>
+    </div>
+  </div>
+</Base>

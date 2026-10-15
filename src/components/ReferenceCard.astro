@@ -1,0 +1,20 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Media from './Media.astro';
+import type { Lang } from '../site';
+import { PATHS, SECTOR_LABELS, SCOPE_LABELS, formatMonth } from '../i18n';
+import { slugOf } from '../content-utils';
+interface Props { entry: CollectionEntry<'references'>; lang: Lang; headingLevel?: 'h2' | 'h3' }
+const { entry, lang, headingLevel = 'h3' } = Astro.props;
+const d = entry.data;
+const H = headingLevel;
+---
+<article class="card">
+  <div class="card-media"><Media cover={d.cover} sector={d.sector} label={SECTOR_LABELS[lang][d.sector]} /></div>
+  <div class="card-body">
+    <p class="meta"><span>{formatMonth(d.year, d.month, lang)}</span><span>{d.location}</span><span class="cc">{d.country}</span></p>
+    <H><a href={PATHS[lang].reference(slugOf(entry.id))}>{d.title}</a></H>
+    <p>{d.summary}</p>
+    <ul class="tags">{d.scope.map((s) => <li>{SCOPE_LABELS[lang][s]}</li>)}</ul>
+  </div>
+</article>

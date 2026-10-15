@@ -1,60 +1,158 @@
 ---
-import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import CopyCommand from './CopyCommand.astro';
+import ReferenceCard from './ReferenceCard.astro';
+import SectorIcon from './SectorIcon.astro';
 import { SITE, type Lang } from '../site';
-import { t, PATHS, formatDate } from '../i18n';
-import { getProjects, getNotes, slugOf } from '../content-utils';
+import { SECTORS } from '../content.config';
+import { t, PATHS, SECTOR_LABELS } from '../i18n';
+import { getReferences, getSoftware, slugOf } from '../content-utils';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const ui = t(lang);
+const P = PATHS[lang];
 const intro = SITE.intro[lang];
-const projects = await getProjects(lang);
-const rendered = await Promise.all(projects.map(async (p) => ({ p, Content: (await render(p)).Content })));
-const notes = (await getNotes(lang)).slice(0, 10);
-const statusText = { active: ui.statusActive, dev: ui.statusDev, archived: ui.statusArchived } as const;
+
+const refs = await getReferences(lang);
+const featured = refs.filter((r) => r.data.featured).slice(0, 6);
+const log = refs.slice(0, 7);
+const years = refs.map((r) => r.data.year);
+const sectorCounts = SECTORS.map((s) => ({ s, n: refs.filter((r) => r.data.sector === s).length })).filter((x) => x.n > 0);
+const countries = new Set(refs.map((r) => r.data.country)).size;
+const yearsInField = new Date().getFullYear() - SITE.since;
+const software = (await getSoftware(lang))[0];
+
+// Yetkinlikler: CV'deki görev ve araçlardan
+const caps = {
+  tr: [
+    { h: 'PLC ve SCADA', p: 'PLC yazılımı, SCADA ve HMI ekranları; Siemens TIA Portal, WinCC, ABB Automation Builder, Phoenix Contact Visu+.' },
+    { h: 'Elektrik projesi', p: 'EPLAN ile elektrik ve pano projeleri; fikir aşamasından temel ve detay mühendisliğe.' },
+    { h: 'Devreye alma', p: 'Sahada test, devreye alma ve arıza giderme; proses kontrolünün iyileştirilmesi.' },
+    { h: 'Saha koordinasyonu', p: 'Kurulum ve devreye almada disiplinler arası ekiplerle çalışma; standart ve iş güvenliği uyumu.' },
+  ],
+  en: [
+    { h: 'PLC & SCADA', p: 'PLC software, SCADA and HMI screens; Siemens TIA Portal, WinCC, ABB Automation Builder, Phoenix Contact Visu+.' },
+    { h: 'Electrical design', p: 'Electrical and panel design in EPLAN; basic and detailed engineering from concept onwards.' },
+    { h: 'Commissioning', p: 'Testing, commissioning and troubleshooting on site; improving process control.' },
+    { h: 'Site coordination', p: 'Working with multidisciplinary teams through installation and start-up; standards and safety compliance.' },
+  ],
+}[lang];
+const ym = (y: number, m?: number) => `${y}·${String(m ?? 0).padStart(2, '0')}`;
 ---
-<Base lang={lang} description={intro.lead}>
+<Base lang={lang} description={intro.description}>
   <section class="hero">
-    <h1>{intro.title}</h1>
-    <p class="lead">{intro.lead}</p>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="led" aria-hidden="true"></span>{intro.eyebrow} · {SITE.location[lang]}</p>
+        <h1>{intro.title}</h1>
+        <p class="lead">{intro.lead}</p>
+        <div class="btns">
+          <a class="btn btn-primary" href={P.references}>{ui.ctaReferences}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+          <a class="btn" href={P.about + '#contact'}>{ui.ctaContact}</a>
+        </div>
+      </div>
+      {log.length > 0 && (
+        <div class="log" role="group" aria-labelledby="log-h">
+          <div class="log-head"><span class="led" aria-hidden="true"></span><span id="log-h">{ui.logTitle}</span><span class="range">{Math.min(...years)}–{Math.max(...years)}</span></div>
+          <ol>
+            {log.map((r) => (
+              <li><a href={P.reference(slugOf(r.id))}>
+                <time datetime={`${r.data.year}-${String(r.data.month ?? 1).padStart(2, '0')}`}>{ym(r.data.year, r.data.month)}</time>
+                <span class="name">{r.data.title}</span>
+                <span class="cc">{r.data.country}</span>
+              </a></li>
+            ))}
+          </ol>
+          <div class="log-foot"><span>{refs.length} {ui.statReferences}</span><span aria-hidden="true">&gt;<span class="cursor"></span></span></div>
+        </div>
+      )}
+    </div>
   </section>
 
-  {rendered.length > 0 && (
-    <section aria-labelledby="projects-h">
-      <h2 id="projects-h" class="section-h">{ui.projects}</h2>
-      {rendered.map(({ p, Content }) => (
-        <article class="project" id={slugOf(p.id)}>
-          <header class="project-head">
-            <h3>{p.data.title}</h3>
-            <span class={`badge badge-${p.data.status}`}>{statusText[p.data.status]}</span>
-          </header>
-          <p class="project-summary">{p.data.summary}</p>
-          {p.data.command && <CopyCommand command={p.data.command} note={p.data.commandNote} lang={lang} />}
-          <div class="prose"><Content /></div>
-          {p.data.links.length > 0 && (
-            <ul class="links">
-              {p.data.links.map((l) => <li><a href={l.href} rel="noopener">{l.label}</a></li>)}
-            </ul>
-          )}
-        </article>
-      ))}
+  <div class="wrap">
+    <dl class="stats">
+      <div><dt>{ui.statReferences}</dt><dd>{refs.length}</dd></div>
+      <div><dt>{ui.statSectors}</dt><dd>{sectorCounts.length}</dd></div>
+      <div><dt>{ui.statCountries}</dt><dd>{countries}</dd></div>
+      <div><dt>{ui.statSince} ({SITE.since}–)</dt><dd>{yearsInField}+ {lang === 'tr' ? 'yıl' : 'yrs'}</dd></div>
+    </dl>
+  </div>
+
+  <section class="section" aria-labelledby="what-h">
+    <div class="wrap">
+      <div class="section-head"><div><p class="kicker">01</p><h2 id="what-h">{ui.whatTitle}</h2></div></div>
+      <div class="caps">
+        {caps.map((c, i) => (
+          <div class="cap"><span class="num">{String(i + 1).padStart(2, '0')}</span><h3>{c.h}</h3><p>{c.p}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {featured.length > 0 && (
+    <section class="section" aria-labelledby="feat-h">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="kicker">02</p><h2 id="feat-h">{ui.featuredTitle}</h2></div>
+          <a class="more" href={P.references}>{ui.allReferences}</a>
+        </div>
+        <div class="cards cards-3">{featured.map((r) => <ReferenceCard entry={r} lang={lang} />)}</div>
+      </div>
     </section>
   )}
 
-  {notes.length > 0 && (
-    <section aria-labelledby="notes-h">
-      <h2 id="notes-h" class="section-h">{ui.notes}</h2>
-      <ul class="notes">
-        {notes.map((n) => (
-          <li>
-            <a href={PATHS[lang].note(slugOf(n.id))}>{n.data.title}</a>
-            <time datetime={n.data.date.toISOString().slice(0, 10)}>{formatDate(n.data.date, lang)}</time>
-            {n.data.summary && <p>{n.data.summary}</p>}
-          </li>
-        ))}
-      </ul>
+  {sectorCounts.length > 0 && (
+    <section class="section" aria-labelledby="sec-h">
+      <div class="wrap">
+        <div class="section-head"><div><p class="kicker">03</p><h2 id="sec-h">{ui.sectorsTitle}</h2></div></div>
+        <div class="sectors">
+          {sectorCounts.map(({ s, n }) => (
+            <a class="sector-tile" href={`${P.references}?sector=${s}`}>
+              <SectorIcon sector={s} />
+              <strong>{SECTOR_LABELS[lang][s]}</strong>
+              <span>{ui.projectsCount(n)}</span>
+            </a>
+          ))}
+        </div>
+      </div>
     </section>
   )}
+
+  {software && (
+    <section class="section" aria-labelledby="sw-h">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="kicker">04</p><h2 id="sw-h">{ui.softwareTitle}</h2><p>{ui.softwareLead}</p></div>
+          <a class="more" href={P.software}>{ui.nav.software}</a>
+        </div>
+        <div class="feature">
+          <div>
+            <p class="meta">{software.data.version && <span>v{software.data.version}</span>}{software.data.platform && <span>{software.data.platform}</span>}</p>
+            <h3>{software.data.title}</h3>
+            <p>{software.data.summary}</p>
+            <div class="btns">
+              <a class="btn" href={P.softwareItem(slugOf(software.id))}>{ui.details}</a>
+              {software.data.repo && <a class="btn" href={software.data.repo} rel="noopener">GitHub</a>}
+            </div>
+          </div>
+          {software.data.command && <CopyCommand command={software.data.command} lang={lang} />}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="section" aria-labelledby="contact-h">
+    <div class="wrap">
+      <div class="contact-band">
+        <div><h2 id="contact-h">{ui.contactTitle}</h2><p>{ui.contactLead}</p></div>
+        <div class="btns">
+          <a class="btn btn-primary" href={`mailto:${SITE.email}`}>{ui.email}</a>
+          <a class="btn" href={SITE.linkedin} rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </Base>

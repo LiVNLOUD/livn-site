@@ -1,0 +1,76 @@
+---
+import Base from '../layouts/Base.astro';
+import SectorIcon from './SectorIcon.astro';
+import { SITE, otherLang, type Lang } from '../site';
+import { SECTORS } from '../content.config';
+import { t, PATHS, SECTOR_LABELS, formatMonth } from '../i18n';
+import { getReferences, slugOf } from '../content-utils';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const ui = t(lang);
+const P = PATHS[lang];
+const refs = await getReferences(lang);
+const sectors = SECTORS.map((s) => ({ s, n: refs.filter((r) => r.data.sector === s).length })).filter((x) => x.n > 0);
+const countText = { tr: '{n} proje gösteriliyor', en: 'Showing {n} projects' }[lang];
+---
+<Base lang={lang} title={ui.referencesTitle} description={`${ui.referencesTitle} — ${SITE.name}. ${ui.referencesLead}`} altPath={PATHS[otherLang(lang)].references}>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href={P.home}>{ui.home}</a> / {ui.nav.references}</p>
+      <h1>{ui.referencesTitle}</h1>
+      <p class="lead">{ui.referencesLead}</p>
+    </header>
+
+    <fieldset class="filters" data-filters hidden>
+      <legend>{ui.filterLabel}</legend>
+      <button type="button" class="chip" data-sector="" aria-pressed="true">{ui.filterAll}<span class="n">{refs.length}</span></button>
+      {sectors.map(({ s, n }) => (
+        <button type="button" class="chip" data-sector={s} aria-pressed="false">{SECTOR_LABELS[lang][s]}<span class="n">{n}</span></button>
+      ))}
+    </fieldset>
+    <p class="count" role="status" data-count data-template={countText}></p>
+
+    <ul class="rows">
+      {refs.map((r) => (
+        <li data-sector={r.data.sector}>
+          <a class="row" href={P.reference(slugOf(r.id))}>
+            <span class="ico"><SectorIcon sector={r.data.sector} /></span>
+            <span class="t">{r.data.title}</span>
+            <span class="row-meta m">
+              <span class="when">{formatMonth(r.data.year, r.data.month, lang)}</span>
+              <span class="where">{r.data.location}</span>
+              <span class="sec">{SECTOR_LABELS[lang][r.data.sector]}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="section"></div>
+  </div>
+</Base>
+
+<script>
+  // Sektör süzgeci: JavaScript yoksa tüm liste görünür; adres ?sector=water ile paylaşılabilir.
+  const box = document.querySelector<HTMLElement>('[data-filters]');
+  const count = document.querySelector<HTMLElement>('[data-count]');
+  const rows = [...document.querySelectorAll<HTMLElement>('.rows > li')];
+  if (box && count) {
+    const chips = [...box.querySelectorAll<HTMLButtonElement>('.chip')];
+    const apply = (sector: string, push: boolean) => {
+      if (!chips.some((c) => c.dataset.sector === sector)) sector = '';
+      let n = 0;
+      for (const r of rows) { const show = !sector || r.dataset.sector === sector; r.hidden = !show; if (show) n++; }
+      for (const c of chips) c.setAttribute('aria-pressed', String(c.dataset.sector === sector));
+      count.textContent = (count.dataset.template ?? '{n}').replace('{n}', String(n));
+      if (push) {
+        const url = new URL(location.href);
+        if (sector) url.searchParams.set('sector', sector); else url.searchParams.delete('sector');
+        history.replaceState(null, '', url);
+      }
+    };
+    for (const c of chips) c.addEventListener('click', () => apply(c.dataset.sector ?? '', true));
+    box.hidden = false;
+    apply(new URLSearchParams(location.search).get('sector') ?? '', false);
+  }
+</script>

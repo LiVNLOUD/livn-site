@@ -3,11 +3,12 @@ title: Livn Tools
 summary: A Windows 10 / 11 toolbox for pre-format backup, post-format setup and everyday maintenance. Every change is shown first and can be rolled back.
 order: 1
 status: active
+version: 4.0.1
+platform: Windows 10 / 11 · PowerShell 5.1
+repo: https://github.com/LiVNLOUD/livn-tools
 command: irm livn.tr/win | iex
 commandNote: Open PowerShell as administrator and paste the command. The installer downloads the latest release and verifies every file with SHA-256. Opening the app does not change any setting by itself.
 links:
-  - label: GitHub
-    href: https://github.com/LiVNLOUD/livn-tools
   - label: Latest release (ZIP)
     href: https://github.com/LiVNLOUD/livn-tools/releases/latest
   - label: Review the installer

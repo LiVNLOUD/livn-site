@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import Media from './Media.astro';
+import { otherLang, type Lang } from '../site';
+import { t, PATHS } from '../i18n';
+import { getSoftware, slugOf } from '../content-utils';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const ui = t(lang);
+const P = PATHS[lang];
+const items = await getSoftware(lang);
+const status = { active: ui.statusActive, dev: ui.statusDev, archived: ui.statusArchived } as const;
+---
+<Base lang={lang} title={ui.softwareListTitle} description={ui.softwareListLead} altPath={PATHS[otherLang(lang)].software}>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href={P.home}>{ui.home}</a> / {ui.nav.software}</p>
+      <h1>{ui.softwareListTitle}</h1>
+      <p class="lead">{ui.softwareListLead}</p>
+    </header>
+    <div class="cards">
+      {items.map((s) => (
+        <article class="card">
+          <div class="card-media"><Media cover={s.data.cover} sector="software" label={s.data.platform} /></div>
+          <div class="card-body">
+            <p class="meta">{s.data.version && <span>v{s.data.version}</span>}<span class={`badge badge-${s.data.status}`}>{status[s.data.status]}</span></p>
+            <h2 class="h3"><a href={P.softwareItem(slugOf(s.id))}>{s.data.title}</a></h2>
+            <p>{s.data.summary}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+    <div class="section"></div>
+  </div>
+</Base>

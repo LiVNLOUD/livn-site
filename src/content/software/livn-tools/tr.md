@@ -3,11 +3,12 @@ title: Livn Tools
 summary: Format öncesi kurtarma, format sonrası kurulum ve günlük bakım için Windows 10 / 11 araç kutusu. Her değişiklik önce gösterilir ve geri alınabilir.
 order: 1
 status: active
+version: 4.0.1
+platform: Windows 10 / 11 · PowerShell 5.1
+repo: https://github.com/LiVNLOUD/livn-tools
 command: irm livn.tr/win | iex
 commandNote: PowerShell'i yönetici olarak açıp komutu yapıştırın. Kurucu en son yayımlanmış sürümü indirir ve her dosyayı SHA-256 ile doğrular. Uygulamayı açmak tek başına hiçbir ayarı değiştirmez.
 links:
-  - label: GitHub
-    href: https://github.com/LiVNLOUD/livn-tools
   - label: Son sürüm (ZIP)
     href: https://github.com/LiVNLOUD/livn-tools/releases/latest
   - label: Kurulum betiğini incele

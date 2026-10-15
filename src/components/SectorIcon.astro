@@ -1,0 +1,43 @@
+---
+// Sektör simgeleri (sitenin kendi çizimi; dış görsel/logo yok)
+interface Props { sector: string; class?: string }
+const { sector, class: cls } = Astro.props;
+---
+<svg class={cls} viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  {sector === 'water' && (<>
+    <path d="M16 4c4.5 5.6 7.5 9.8 7.5 13.4A7.5 7.5 0 0 1 8.5 17.4C8.5 13.8 11.5 9.6 16 4Z" />
+    <path d="M12.2 18.4a3.9 3.9 0 0 0 3.8 3.4" />
+    <path d="M4 28h4M12 28h8M24 28h4" />
+  </>)}
+  {sector === 'energy' && (<>
+    <path d="M17.5 3 8 18h7l-1.5 11L24 13h-7l.5-10Z" />
+  </>)}
+  {sector === 'process' && (<>
+    <path d="M12 4h8M13.5 4v8L6.8 24.6A2.3 2.3 0 0 0 8.8 28h14.4a2.3 2.3 0 0 0 2-3.4L18.5 12V4" />
+    <path d="M9.5 20h13" />
+    <circle cx="14" cy="24" r="1" /><circle cx="19" cy="23" r="1" />
+  </>)}
+  {sector === 'mining' && (<>
+    <path d="M5 12c5.5-6 16.5-6 22 0" />
+    <path d="M16 8.2 9 27" />
+    <path d="M4 28h24" />
+    <path d="M20 22l3-4 4 2-1 8" />
+  </>)}
+  {sector === 'oil-gas' && (<>
+    <path d="M4 10l13-4 11 3" />
+    <path d="M9 8.5 13 28M14 28l3-22" />
+    <path d="M17 6l3 22" />
+    <path d="M25 9v6M23 15h4" />
+    <path d="M4 28h24" />
+  </>)}
+  {sector === 'food' && (<>
+    <path d="M16 28V9" />
+    <path d="M16 13c-3-1-5-3.4-5-6.5 3 .6 5 2.8 5 6.5ZM16 13c3-1 5-3.4 5-6.5-3 .6-5 2.8-5 6.5Z" />
+    <path d="M16 19.5c-3-1-5-3.4-5-6.5 3 .6 5 2.8 5 6.5ZM16 19.5c3-1 5-3.4 5-6.5-3 .6-5 2.8-5 6.5Z" />
+    <path d="M16 4.5v1.5" />
+  </>)}
+  {sector === 'software' && (<>
+    <rect x="4" y="6" width="24" height="20" rx="2" />
+    <path d="M4 11h24M9 16l3 2.5L9 21M15 21h6" />
+  </>)}
+</svg>

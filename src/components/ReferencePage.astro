@@ -1,0 +1,60 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Media from './Media.astro';
+import Gallery from './Gallery.astro';
+import { SITE, otherLang, type Lang } from '../site';
+import { t, PATHS, SECTOR_LABELS, SCOPE_LABELS, formatMonth, countryName } from '../i18n';
+import { getReferences, twinOf, slugOf } from '../content-utils';
+
+interface Props { lang: Lang; entry: CollectionEntry<'references'> }
+const { lang, entry } = Astro.props;
+const ui = t(lang);
+const P = PATHS[lang];
+const d = entry.data;
+const { Content } = await render(entry);
+const other = otherLang(lang);
+const twin = await twinOf('references', entry, other);
+const altPath = twin ? PATHS[other].reference(slugOf(twin.id)) : PATHS[other].references;
+const all = await getReferences(lang);
+const i = all.findIndex((r) => r.id === entry.id);
+const newer = all[i - 1];
+const older = all[i + 1];
+const og = d.cover ? (await getImage({ src: d.cover.src, width: 1200, height: 630, fit: 'cover', format: 'jpg' })).src : undefined;
+const hasBody = !!entry.body?.trim();
+---
+<Base lang={lang} title={d.title} description={`${d.summary} ${d.location}, ${d.year}.`} altPath={altPath} image={og}>
+  <div class="wrap">
+    <header class="detail-head">
+      <div>
+        <p class="crumbs"><a href={P.home}>{ui.home}</a> / <a href={P.references}>{ui.nav.references}</a></p>
+        <p class="kicker">{SECTOR_LABELS[lang][d.sector]}</p>
+        <h1>{d.title}</h1>
+        <p class="lead">{d.summary}</p>
+      </div>
+      <dl class="facts">
+        <div><dt>{ui.year}</dt><dd>{formatMonth(d.year, d.month, lang)}</dd></div>
+        <div><dt>{ui.location}</dt><dd>{d.location.includes(countryName(d.country, lang)) ? d.location : `${d.location} · ${countryName(d.country, lang)}`}</dd></div>
+        {d.client && <div><dt>{ui.client}</dt><dd>{d.client}</dd></div>}
+        {d.role && <div><dt>{ui.role}</dt><dd>{d.role}</dd></div>}
+        <div><dt>{ui.scope}</dt><dd><ul class="tags">{d.scope.map((s) => <li>{SCOPE_LABELS[lang][s]}</li>)}</ul></dd></div>
+        {d.technologies.length > 0 && <div><dt>{ui.technologies}</dt><dd><ul class="tags">{d.technologies.map((x) => <li>{x}</li>)}</ul></dd></div>}
+      </dl>
+    </header>
+
+    {d.cover
+      ? <figure class="cover"><Media cover={d.cover} sector={d.sector} widths={[640, 960, 1280, 1920]} sizes="(min-width: 1120px) 1064px, 100vw" eager /></figure>
+      : <div class="cover-plate"><Media sector={d.sector} label={SECTOR_LABELS[lang][d.sector]} /></div>}
+
+    {hasBody && <div class="prose"><Content /></div>}
+    <Gallery items={d.gallery} title={ui.gallery} />
+
+    <nav class="pager" aria-label={ui.nav.references}>
+      {newer && <a class="prev" href={P.reference(slugOf(newer.id))}><span class="dir">← {ui.prevReference}</span><span class="pt">{newer.data.title}</span></a>}
+      {older && <a class="next" href={P.reference(slugOf(older.id))}><span class="dir">{ui.nextReference} →</span><span class="pt">{older.data.title}</span></a>}
+    </nav>
+    <p><a class="more" href={P.references}>{ui.backToReferences}</a></p>
+    <div class="section"></div>
+  </div>
+</Base>

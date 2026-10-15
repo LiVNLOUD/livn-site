@@ -2,8 +2,8 @@
 import NotePage from '../../components/NotePage.astro';
 import { getNotes, slugOf } from '../../content-utils';
 export async function getStaticPaths() {
-  return (await getNotes('tr')).map((note) => ({ params: { slug: slugOf(note.id) }, props: { note } }));
+  return (await getNotes('tr')).map((entry) => ({ params: { slug: slugOf(entry.id) }, props: { entry } }));
 }
-const { note } = Astro.props;
+const { entry } = Astro.props;
 ---
-<NotePage lang="tr" note={note} />
+<NotePage lang="tr" entry={entry} />

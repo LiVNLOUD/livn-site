@@ -1,0 +1,9 @@
+---
+import ReferencePage from '../../components/ReferencePage.astro';
+import { getReferences, slugOf } from '../../content-utils';
+export async function getStaticPaths() {
+  return (await getReferences('tr')).map((entry) => ({ params: { slug: slugOf(entry.id) }, props: { entry } }));
+}
+const { entry } = Astro.props;
+---
+<ReferencePage lang="tr" entry={entry} />

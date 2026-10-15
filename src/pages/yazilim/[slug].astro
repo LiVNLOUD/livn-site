@@ -1,0 +1,9 @@
+---
+import SoftwarePage from '../../components/SoftwarePage.astro';
+import { getSoftware, slugOf } from '../../content-utils';
+export async function getStaticPaths() {
+  return (await getSoftware('tr')).map((entry) => ({ params: { slug: slugOf(entry.id) }, props: { entry } }));
+}
+const { entry } = Astro.props;
+---
+<SoftwarePage lang="tr" entry={entry} />

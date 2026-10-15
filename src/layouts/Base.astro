@@ -1,7 +1,9 @@
 ---
 import '../styles/global.css';
-import { SITE, type Lang } from '../site';
+import BrandMark from '../components/BrandMark.astro';
+import { SITE, otherLang, type Lang } from '../site';
 import { t, PATHS } from '../i18n';
+import { getNotes } from '../content-utils';
 
 interface Props {
   lang: Lang;
@@ -9,15 +11,29 @@ interface Props {
   description: string;
   // Diğer dildeki karşılığı (yoksa o dilin ana sayfası)
   altPath?: string;
+  // Open Graph görseli (mutlak ya da kök göreli yol); yoksa /og.png
+  image?: string;
+  noindex?: boolean;
 }
-const { lang, title, description, altPath } = Astro.props;
-const other: Lang = lang === 'tr' ? 'en' : 'tr';
+const { lang, title, description, altPath, image, noindex = false } = Astro.props;
+const other = otherLang(lang);
 const ui = t(lang);
-const fullTitle = title ? `${title} · ${SITE.name}` : SITE.name;
+const P = PATHS[lang];
+const fullTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} — ${SITE.intro[lang].eyebrow}`;
 const canonical = new URL(Astro.url.pathname, SITE.url).href;
 const altHref = altPath ?? PATHS[other].home;
 const trHref = new URL(lang === 'tr' ? Astro.url.pathname : altHref, SITE.url).href;
 const enHref = new URL(lang === 'en' ? Astro.url.pathname : altHref, SITE.url).href;
+const ogImage = new URL(image ?? '/og.png', SITE.url).href;
+const hasNotes = (await getNotes(lang)).length > 0;
+const nav = [
+  { href: P.references, label: ui.nav.references },
+  { href: P.software, label: ui.nav.software },
+  ...(hasNotes ? [{ href: P.notes, label: ui.nav.notes }] : []),
+  { href: P.about, label: ui.nav.about },
+];
+const path = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const isCurrent = (href: string) => path === href || path.startsWith(href);
 ---
 <!doctype html>
 <html lang={ui.htmlLang}>
@@ -25,31 +41,60 @@ const enHref = new URL(lang === 'en' ? Astro.url.pathname : altHref, SITE.url).h
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
+    <script is:inline src="/theme.js"></script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <link rel="alternate" hreflang="tr" href={trHref} />
     <link rel="alternate" hreflang="en" href={enHref} />
     <link rel="alternate" hreflang="x-default" href={trHref} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0e1113" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
     <meta property="og:locale" content={lang === 'tr' ? 'tr_TR' : 'en_US'} />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <a class="skip" href="#main">{ui.skip}</a>
-    <header class="top wrap">
-      <a class="brand" href={PATHS[lang].home}>{SITE.name}</a>
-      <a class="lang" href={altHref} hreflang={other} lang={other}>{ui.switchLang}</a>
+    <header class="top">
+      <div class="wrap top-inner">
+        <a class="brand" href={P.home}>
+          <BrandMark class="brand-mark" />
+          <span>{SITE.name}</span>
+          <span class="brand-role">/ {SITE.intro[lang].eyebrow.toLowerCase()}</span>
+        </a>
+        <nav class="nav" aria-label={ui.menu}>
+          <ul>
+            {nav.map((n) => <li><a href={n.href} aria-current={isCurrent(n.href) ? 'page' : undefined}>{n.label}</a></li>)}
+          </ul>
+        </nav>
+        <div class="tools">
+          <button type="button" class="theme-btn" aria-label={ui.themeToggle} title={ui.themeToggle} hidden>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" /></svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+          </button>
+          <a class="lang" href={altHref} hreflang={other} lang={other} aria-label={`${ui.switchLangShort} · ${ui.switchLang}`}>{ui.switchLangShort}</a>
+        </div>
+      </div>
     </header>
-    <main id="main" class="wrap">
+    <main id="main">
       <slot />
     </main>
-    <footer class="foot wrap">
-      <a href={SITE.github} rel="noopener">GitHub</a>
-      <span>© {new Date().getFullYear()} {SITE.name}</span>
+    <footer class="foot">
+      <div class="wrap foot-inner">
+        <ul>
+          <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+          <li><a href={SITE.linkedin} rel="noopener">LinkedIn</a></li>
+          <li><a href={SITE.github} rel="noopener">GitHub</a></li>
+        </ul>
+        <p class="copy">© {new Date().getFullYear()} {SITE.name} · livn.tr</p>
+      </div>
     </footer>
   </body>
 </html>

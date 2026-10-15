@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import { otherLang, type Lang } from '../site';
+import { t, PATHS, formatDate } from '../i18n';
+import { getNotes, slugOf } from '../content-utils';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const ui = t(lang);
+const P = PATHS[lang];
+const notes = await getNotes(lang);
+---
+<Base lang={lang} title={ui.notesTitle} description={ui.notesLead} altPath={PATHS[otherLang(lang)].notes} noindex={notes.length === 0}>
+  <div class="wrap wrap-narrow">
+    <header class="page-head">
+      <p class="crumbs"><a href={P.home}>{ui.home}</a> / {ui.nav.notes}</p>
+      <h1>{ui.notesTitle}</h1>
+      <p class="lead">{ui.notesLead}</p>
+    </header>
+    {notes.length === 0 ? <p class="empty">{ui.notesEmpty}</p> : (
+      <ul class="notes">
+        {notes.map((n) => (
+          <li>
+            <time datetime={n.data.date.toISOString().slice(0, 10)}>{formatDate(n.data.date, lang)}</time>
+            <a href={P.note(slugOf(n.id))}>{n.data.title}</a>
+            {n.data.summary && <p>{n.data.summary}</p>}
+          </li>
+        ))}
+      </ul>
+    )}
+    <div class="section"></div>
+  </div>
+</Base>

@@ -1,0 +1,55 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import CopyCommand from './CopyCommand.astro';
+import Gallery from './Gallery.astro';
+import Media from './Media.astro';
+import { otherLang, type Lang } from '../site';
+import { t, PATHS } from '../i18n';
+import { twinOf, slugOf } from '../content-utils';
+interface Props { lang: Lang; entry: CollectionEntry<'software'> }
+const { lang, entry } = Astro.props;
+const ui = t(lang);
+const P = PATHS[lang];
+const d = entry.data;
+const { Content } = await render(entry);
+const other = otherLang(lang);
+const twin = await twinOf('software', entry, other);
+const altPath = twin ? PATHS[other].softwareItem(slugOf(twin.id)) : PATHS[other].software;
+const status = { active: ui.statusActive, dev: ui.statusDev, archived: ui.statusArchived } as const;
+const og = d.cover ? (await getImage({ src: d.cover.src, width: 1200, height: 630, fit: 'cover', format: 'jpg' })).src : undefined;
+---
+<Base lang={lang} title={d.title} description={d.summary} altPath={altPath} image={og}>
+  <div class="wrap">
+    <header class="detail-head">
+      <div>
+        <p class="crumbs"><a href={P.home}>{ui.home}</a> / <a href={P.software}>{ui.nav.software}</a></p>
+        <p class="kicker">{ui.softwareTitle}</p>
+        <h1>{d.title}</h1>
+        <p class="lead">{d.summary}</p>
+      </div>
+      <dl class="facts">
+        {d.version && <div><dt>{ui.version}</dt><dd class="mono">v{d.version}</dd></div>}
+        <div><dt>{ui.status}</dt><dd><span class={`badge badge-${d.status}`}>{status[d.status]}</span></dd></div>
+        {d.platform && <div><dt>{ui.platform}</dt><dd>{d.platform}</dd></div>}
+        {d.repo && <div><dt>{ui.source}</dt><dd><a href={d.repo} rel="noopener">{d.repo.replace('https://', '')}</a></dd></div>}
+      </dl>
+    </header>
+
+    {d.cover && <figure class="cover"><Media cover={d.cover} sector="software" widths={[640, 960, 1280, 1920]} sizes="(min-width: 1120px) 1064px, 100vw" eager /></figure>}
+
+    {d.command && (
+      <section aria-labelledby="install-h">
+        <h2 id="install-h" class="kicker">{ui.install}</h2>
+        <CopyCommand command={d.command} note={d.commandNote} lang={lang} />
+      </section>
+    )}
+    {d.links.length > 0 && <ul class="links">{d.links.map((l) => <li><a href={l.href} rel="noopener">{l.label}</a></li>)}</ul>}
+
+    <div class="prose section"><Content /></div>
+    <Gallery items={d.gallery} title={ui.gallery} />
+    <p><a class="more" href={P.software}>{ui.backToSoftware}</a></p>
+    <div class="section"></div>
+  </div>
+</Base>

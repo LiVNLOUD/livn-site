@@ -47,12 +47,6 @@ tools:
   - HMI applications (various brands)
   - EPLAN
   - Microsoft Office
-education:
-  - period: "2008 – 2011"
-    title: Mazhar Zorlu Technical High School, Izmir
-  - period: ""
-    title: Ege University, Control and Automation Technology
-    note: After starting my studies I chose to gain practical experience in the field.
 languages:
   - name: Turkish
     level: Native

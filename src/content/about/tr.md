@@ -47,12 +47,6 @@ tools:
   - Farklı markalarda HMI uygulamaları
   - EPLAN
   - Microsoft Office
-education:
-  - period: "2008 – 2011"
-    title: Mazhar Zorlu Teknik Lisesi, İzmir
-  - period: ""
-    title: Ege Üniversitesi, Kontrol ve Otomasyon Teknolojisi
-    note: Öğrenime başladıktan sonra sahada deneyim kazanmayı seçtim.
 languages:
   - name: Türkçe
     level: Ana dil

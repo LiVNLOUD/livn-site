@@ -7,6 +7,7 @@ location: "Şanlıurfa"
 country: TR
 coords: [37.16, 38.79]   # enlem, boylam (harita için)
 sector: water
+schematic: wastewater
 scope: [plc, scada, commissioning, electrical, automation, subcontract]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 client: "Wabag"

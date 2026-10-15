@@ -7,6 +7,7 @@ location: "Nusaybin, Mardin"
 country: TR
 coords: [37.07, 41.21]   # enlem, boylam (harita için)
 sector: oil-gas
+schematic: oil
 scope: [plc, scada, commissioning, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 client: "TPAO"

@@ -7,6 +7,7 @@ location: "İskenderun, Hatay"
 country: TR
 coords: [36.59, 36.17]   # enlem, boylam (harita için)
 sector: energy
+schematic: demi
 scope: [plc, scada, commissioning, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 client: "Atlas Enerji"

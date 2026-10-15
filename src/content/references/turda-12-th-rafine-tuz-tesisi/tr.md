@@ -7,6 +7,7 @@ location: "Turda, Romanya"
 country: RO
 coords: [46.57, 23.78]   # enlem, boylam (harita için)
 sector: process
+schematic: salt
 scope: [plc, scada, commissioning, electrical, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 role: "Elektrik ve otomasyon sorumlusu"

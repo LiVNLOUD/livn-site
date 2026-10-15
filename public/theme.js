@@ -3,6 +3,11 @@
 (function () {
   var root = document.documentElement;
   try { var saved = localStorage.getItem('theme'); if (saved === 'light' || saved === 'dark') root.dataset.theme = saved; } catch (e) {}
+  // İlk ziyarette ana sayfada kısa açılış (çizimden önce karar verilir; ayrıntı: src/scripts/home.ts)
+  try {
+    var p = location.pathname;
+    if ((p === '/' || p === '/en/') && localStorage.getItem('livn-boot') !== '1' && !matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('boot-pending');
+  } catch (e) {}
   document.addEventListener('DOMContentLoaded', function () {
     var btn = document.querySelector('.theme-btn');
     if (!btn) return;

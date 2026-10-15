@@ -60,48 +60,76 @@ const ym = (y: number, m?: number) => (m ? `${y}·${String(m).padStart(2, '0')}`
           <a class="btn" href={P.about + '#contact'}>{ui.ctaContact}</a>
         </div>
       </div>
-      {log.length > 0 && (
-        <div class="log" role="group" aria-labelledby="log-h">
-          <div class="log-head"><span class="led" aria-hidden="true"></span><span id="log-h">{ui.logTitle}</span><span class="range">{Math.min(...years)}–{Math.max(...years)}</span></div>
-          <ol>
-            {log.map((r) => (
-              <li><a href={P.reference(slugOf(r.id))}>
-                <time datetime={r.data.month ? `${r.data.year}-${String(r.data.month).padStart(2, '0')}` : String(r.data.year)}>{ym(r.data.year, r.data.month)}</time>
-                <span class="name">{r.data.title}</span>
-                <span class="cc">{r.data.country}</span>
-              </a></li>
-            ))}
-          </ol>
-          <div class="log-foot"><span>{refs.length} {ui.statReferences}</span><span aria-hidden="true">&gt;<span class="cursor"></span></span></div>
+      <div class="hmi log" role="group" aria-labelledby="log-h" data-hmi>
+        <div class="log-head"><span class="led" aria-hidden="true"></span><span id="log-h">HMI · {ui.logTitle}</span><span class="sim">{ui.simulation}</span></div>
+        <div class="hmi-screen" aria-hidden="true">
+          <svg class="hmi-mimic" viewBox="0 0 360 150">
+            <defs><clipPath id="hmi-tank"><rect x="24" y="30" width="62" height="96" rx="6" /></clipPath></defs>
+            <path class="m-pipe" d="M8 22h46v8" /><path class="m-flow" d="M8 22h46v8" />
+            <rect class="m-eq" x="24" y="30" width="62" height="96" rx="6" />
+            <rect class="hmi-level" x="24" y="66" width="62" height="60" clip-path="url(#hmi-tank)" data-level />
+            <path class="m-thin" d="M30 54h8M30 78h8M30 102h8" />
+            <text x="55" y="146" class="hmi-tag">T-101</text>
+            <path class="m-pipe" d="M86 116h40" /><path class="m-flow" d="M86 116h40" />
+            <circle class="m-eq" cx="142" cy="116" r="16" />
+            <g class="hmi-impeller"><path d="M142 104v24M130 116h24M133.5 107.5l17 17M150.5 107.5l-17 17" /></g>
+            <circle class="m-led hmi-run" cx="160" cy="98" r="4" />
+            <text x="142" y="146" class="hmi-tag">P-101</text>
+            <path class="m-pipe" d="M158 116h22V62h44" /><path class="m-flow" d="M158 116h22V62h44" />
+            <path class="m-eq" d="M224 52l20 10-20 10zM264 52l-20 10 20 10z" />
+            <path class="m-thin" d="M244 62V44M236 44h16" />
+            <path class="m-pipe" d="M264 62h88" /><path class="m-flow" d="M264 62h88" />
+            <text x="352" y="80" class="hmi-tag hmi-end">{lang === 'tr' ? '→ PROSES' : '→ PROCESS'}</text>
+            <g class="hmi-ro"><rect x="96" y="30" width="72" height="34" rx="4" /><text x="102" y="43" class="hmi-tag">LT-101</text><text x="102" y="58" class="hmi-val"><tspan data-v="lvl">62.4</tspan> %</text></g>
+            <g class="hmi-ro"><rect x="270" y="14" width="84" height="34" rx="4" /><text x="276" y="27" class="hmi-tag">FT-102</text><text x="276" y="42" class="hmi-val"><tspan data-v="flow">18.6</tspan> m³/h</text></g>
+            <g class="hmi-ro"><rect x="190" y="96" width="76" height="34" rx="4" /><text x="196" y="109" class="hmi-tag">PT-103</text><text x="196" y="124" class="hmi-val"><tspan data-v="p">3.42</tspan> bar</text></g>
+          </svg>
+          <svg class="hmi-trend" viewBox="0 0 360 64" preserveAspectRatio="none">
+            <path class="hmi-grid" d="M0 16h360M0 32h360M0 48h360M60 0v64M120 0v64M180 0v64M240 0v64M300 0v64" />
+            <polyline class="hmi-line" data-trend points="0,34 360,34" />
+          </svg>
+          <p class="hmi-trend-label"><span>FT-102 · 60 s</span><span>m³/h</span></p>
         </div>
-      )}
+        <ol>
+          {log.slice(0, 5).map((r) => (
+            <li><a href={P.reference(slugOf(r.id))}>
+              <time datetime={r.data.month ? `${r.data.year}-${String(r.data.month).padStart(2, '0')}` : String(r.data.year)}>{ym(r.data.year, r.data.month)}</time>
+              <span class="name">{r.data.title}</span>
+              <span class="cc">{r.data.country}</span>
+            </a></li>
+          ))}
+        </ol>
+        <div class="log-foot"><span>{refs.length} {ui.statReferences} · {Math.min(...years)}–{Math.max(...years)}</span><span aria-hidden="true">&gt;<span class="cursor"></span></span></div>
+      </div>
     </div>
   </section>
 
   <div class="wrap">
     <dl class="stats">
-      <div><dt>{ui.statReferences}</dt><dd>{refs.length}</dd></div>
-      <div><dt>{ui.statSectors}</dt><dd>{sectorCounts.length}</dd></div>
-      <div><dt>{ui.statCountries}</dt><dd>{countries}</dd></div>
-      <div><dt>{ui.statSince} ({SITE.since}–)</dt><dd>{yearsInField} {lang === 'tr' ? 'yıl' : 'yrs'}</dd></div>
+      <div><dt>{ui.statReferences}</dt><dd data-count={refs.length}>{refs.length}</dd></div>
+      <div><dt>{ui.statSectors}</dt><dd data-count={sectorCounts.length}>{sectorCounts.length}</dd></div>
+      <div><dt>{ui.statCountries}</dt><dd data-count={countries}>{countries}</dd></div>
+      <div><dt>{ui.statSince} ({SITE.since}–)</dt><dd><span data-count={yearsInField}>{yearsInField}</span> {lang === 'tr' ? 'yıl' : 'yrs'}</dd></div>
     </dl>
   </div>
 
-  <section class="section" aria-labelledby="what-h">
+  <section class="section flow" aria-labelledby="what-h">
+    <span class="flow-pipe" aria-hidden="true"></span>
     <div class="wrap">
-      <div class="section-head"><div><p class="kicker">01</p><h2 id="what-h">{ui.whatTitle}</h2></div></div>
+      <div class="section-head"><div><p class="kicker"><span class="flow-node" aria-hidden="true"></span>01</p><h2 id="what-h">{ui.whatTitle}</h2></div></div>
       <div class="caps">
         {caps.map((c, i) => (
-          <div class="cap"><span class="num">{String(i + 1).padStart(2, '0')}</span><h3>{c.h}</h3><p>{c.p}</p></div>
+          <div class="cap reveal"><span class="num">{String(i + 1).padStart(2, '0')}</span><h3>{c.h}</h3><p>{c.p}</p></div>
         ))}
       </div>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="map-h">
+  <section class="section flow" aria-labelledby="map-h">
+    <span class="flow-pipe" aria-hidden="true"></span>
     <div class="wrap">
       <div class="section-head">
-        <div><p class="kicker">02</p><h2 id="map-h">{ui.mapTitle}</h2><p>{ui.mapLead}</p></div>
+        <div><p class="kicker"><span class="flow-node" aria-hidden="true"></span>02</p><h2 id="map-h">{ui.mapTitle}</h2><p>{ui.mapLead}</p></div>
         <a class="more" href={P.references}>{ui.allReferences}</a>
       </div>
       <ProjectMap refs={refs} lang={lang} />
@@ -109,10 +137,11 @@ const ym = (y: number, m?: number) => (m ? `${y}·${String(m).padStart(2, '0')}`
   </section>
 
   {featured.length > 0 && (
-    <section class="section" aria-labelledby="feat-h">
+    <section class="section flow" aria-labelledby="feat-h">
+      <span class="flow-pipe" aria-hidden="true"></span>
       <div class="wrap">
         <div class="section-head">
-          <div><p class="kicker">03</p><h2 id="feat-h">{ui.featuredTitle}</h2></div>
+          <div><p class="kicker"><span class="flow-node" aria-hidden="true"></span>03</p><h2 id="feat-h">{ui.featuredTitle}</h2></div>
           <a class="more" href={P.references}>{ui.allReferences}</a>
         </div>
         <div class="cards cards-3">{featured.map((r) => <ReferenceCard entry={r} lang={lang} />)}</div>
@@ -121,12 +150,13 @@ const ym = (y: number, m?: number) => (m ? `${y}·${String(m).padStart(2, '0')}`
   )}
 
   {sectorCounts.length > 0 && (
-    <section class="section" aria-labelledby="sec-h">
+    <section class="section flow" aria-labelledby="sec-h">
+      <span class="flow-pipe" aria-hidden="true"></span>
       <div class="wrap">
-        <div class="section-head"><div><p class="kicker">04</p><h2 id="sec-h">{ui.sectorsTitle}</h2></div></div>
+        <div class="section-head"><div><p class="kicker"><span class="flow-node" aria-hidden="true"></span>04</p><h2 id="sec-h">{ui.sectorsTitle}</h2></div></div>
         <div class="sectors">
           {sectorCounts.map(({ s, n }) => (
-            <a class="sector-tile" href={`${P.references}?sector=${s}`}>
+            <a class="sector-tile reveal" href={`${P.references}?sector=${s}`}>
               <SectorIcon sector={s} />
               <strong>{SECTOR_LABELS[lang][s]}</strong>
               <span>{ui.projectsCount(n)}</span>
@@ -138,13 +168,14 @@ const ym = (y: number, m?: number) => (m ? `${y}·${String(m).padStart(2, '0')}`
   )}
 
   {software && (
-    <section class="section" aria-labelledby="sw-h">
+    <section class="section flow" aria-labelledby="sw-h">
+      <span class="flow-pipe" aria-hidden="true"></span>
       <div class="wrap">
         <div class="section-head">
-          <div><p class="kicker">05</p><h2 id="sw-h">{ui.softwareTitle}</h2><p>{ui.softwareLead}</p></div>
+          <div><p class="kicker"><span class="flow-node" aria-hidden="true"></span>05</p><h2 id="sw-h">{ui.softwareTitle}</h2><p>{ui.softwareLead}</p></div>
           <a class="more" href={P.software}>{ui.nav.software}</a>
         </div>
-        <div class="feature">
+        <div class="feature reveal">
           <div>
             <p class="meta">{software.data.version && <span>v{software.data.version}</span>}{software.data.platform && <span>{software.data.platform}</span>}</p>
             <h3>{software.data.title}</h3>
@@ -160,9 +191,10 @@ const ym = (y: number, m?: number) => (m ? `${y}·${String(m).padStart(2, '0')}`
     </section>
   )}
 
-  <section class="section" aria-labelledby="contact-h">
+  <section class="section flow" aria-labelledby="contact-h">
+    <span class="flow-pipe" aria-hidden="true"></span>
     <div class="wrap">
-      <div class="contact-band">
+      <div class="contact-band reveal">
         <div class="contact-who">
           {portrait && <Picture class="avatar" src={portrait} alt={SITE.name} widths={[80, 160]} sizes="80px" formats={['avif', 'webp']} loading="lazy" />}
           <div><h2 id="contact-h">{ui.contactTitle}</h2><p>{ui.contactLead}</p></div>
@@ -174,4 +206,15 @@ const ym = (y: number, m?: number) => (m ? `${y}·${String(m).padStart(2, '0')}`
       </div>
     </div>
   </section>
+  <div class="boot" data-boot hidden aria-hidden="true">
+    <div class="boot-box">
+      <p class="boot-title">livn.tr // {SITE.name.toLocaleUpperCase(lang === 'tr' ? 'tr-TR' : 'en-GB')}</p>
+      {ui.bootLines.map((l) => <p class="boot-line">&gt; {l}</p>)}
+      <p class="boot-line boot-ok">&gt; {refs.length} / {refs.length} <span class="led"></span></p>
+    </div>
+  </div>
 </Base>
+
+<script>
+  import '../scripts/home';
+</script>

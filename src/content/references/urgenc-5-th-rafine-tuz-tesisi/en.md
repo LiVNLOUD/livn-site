@@ -7,6 +7,7 @@ location: "Urgench, Uzbekistan"
 country: UZ
 coords: [41.55, 60.63]   # enlem, boylam (harita için)
 sector: process
+schematic: salt
 scope: [plc, scada, commissioning, electrical, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 role: "Electrical & automation lead"

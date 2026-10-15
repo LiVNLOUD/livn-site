@@ -20,6 +20,7 @@ const picture = ({ image }: SchemaContext) =>
   });
 
 export const SECTORS = ['water', 'energy', 'process', 'mining', 'oil-gas', 'food'] as const;
+export const SCHEMATICS = ['wastewater', 'drinking', 'pumping', 'power', 'demi', 'geothermal', 'nitrate', 'salt', 'acid', 'granulation', 'pneumatic', 'oil', 'feed', 'poultry'] as const;
 export const SCOPES = [
   'electrical',
   'automation',
@@ -50,6 +51,8 @@ const references = defineCollection({
       // Harita konumu: [enlem, boylam] (ör. [38.42, 27.14] İzmir). Boşsa haritada görünmez.
       coords: z.tuple([z.number().min(-90).max(90), z.number().min(-180).max(180)]).optional(),
       sector: z.enum(SECTORS),
+      // Fotoğraf yoksa gösterilecek şematik çizim türü (boşsa sektörün varsayılanı)
+      schematic: z.enum(SCHEMATICS).optional(),
       scope: z.array(z.enum(SCOPES)).min(1),
       // Kullanılan ürün/yazılım adları (marka logosu değil, yalnız ad)
       technologies: z.array(z.string()).default([]),

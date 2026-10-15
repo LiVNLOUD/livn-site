@@ -6,6 +6,7 @@ location: "Bursa"
 country: TR
 coords: [40.19, 29.06]   # enlem, boylam (harita için)
 sector: process
+schematic: nitrate
 scope: [plc, scada, commissioning, electrical, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 client: "Yıldırım Kimya"

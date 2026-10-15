@@ -7,6 +7,7 @@ location: "Çanakkale"
 country: TR
 coords: [40.15, 26.41]   # enlem, boylam (harita için)
 sector: process
+schematic: acid
 scope: [plc, scada, commissioning, electrical, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 client: "İÇDAŞ"

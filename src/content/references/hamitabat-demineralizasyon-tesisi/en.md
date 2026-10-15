@@ -7,6 +7,7 @@ location: "Lüleburgaz, Kırklareli"
 country: TR
 coords: [41.4, 27.36]   # enlem, boylam (harita için)
 sector: energy
+schematic: demi
 scope: [plc, scada, commissioning, electrical, automation, subcontract]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 client: "Hamitabat A.Ş."

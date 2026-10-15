@@ -7,7 +7,7 @@ import type { FeatureCollection, Geometry } from 'geojson';
 import world from 'world-atlas/countries-50m.json';
 import type { CollectionEntry } from 'astro:content';
 import type { Lang } from '../site';
-import { PATHS, countryName } from '../i18n';
+import { t, PATHS, countryName } from '../i18n';
 import { slugOf } from '../content-utils';
 
 interface Props { refs: CollectionEntry<'references'>[]; lang: Lang; compact?: boolean }
@@ -46,7 +46,9 @@ const dots = [...groups.values()].map((list) => {
     y: Math.round(y * 10) / 10,
     n: list.length,
     href: list.length === 1 ? P.reference(slugOf(list[0].id)) : `${P.references}?place=${encodeURIComponent(place)}`,
-    label: list.length > 1 ? `${place} (${list.length}): ${list.map((r) => r.data.title).join(' · ')}` : `${place}: ${list[0].data.title}`,
+    years: list.map((r) => r.data.year).sort((a, b) => a - b),
+    cc: list[0].data.country,
+    label: list.length > 1 ? `${list.length} ${lang === 'tr' ? 'proje' : 'projects'}, ${place}: ${list.map((r) => r.data.title).join(' · ')}` : `${place}: ${list[0].data.title}`,
   };
 }).sort((a, b) => a.n - b.n);
 
@@ -57,16 +59,28 @@ const labels = [...used].filter((c) => labelAt[c]).map((c) => {
   const [x, y] = projection([lon, lat]) ?? [0, 0];
   return { x: Math.round(x), y: Math.round(y), text: countryName(c, lang).toLocaleUpperCase(lang === 'tr' ? 'tr-TR' : 'en-GB') };
 });
+// Yurt dışı projelere İzmir'den yay (kariyerin büyük bölümü İzmir merkezli)
+const [hx, hy] = projection([27.14, 38.42]) ?? [0, 0];
+const arcs = dots.filter((d) => d.cc !== 'TR').map((d) => {
+  const mx = (hx + d.x) / 2;
+  const my = Math.min(hy, d.y) - Math.abs(d.x - hx) * 0.18;
+  return { d: `M${hx.toFixed(1)} ${hy.toFixed(1)}Q${mx.toFixed(1)} ${my.toFixed(1)} ${d.x} ${d.y}`, year: d.years[0] };
+});
+const allYears = refs.map((r) => r.data.year);
+const minYear = Math.min(...allYears);
+const maxYear = Math.max(...allYears);
+const ui = t(lang);
 const ariaLabel = lang === 'tr' ? 'Proje konumları haritası' : 'Map of project locations';
 ---
-<figure class:list={['map', { 'map-compact': compact }]}>
+<figure class:list={['map', 'reveal', { 'map-compact': compact }]}>
   <svg viewBox={`0 0 ${W} ${H}`} role="group" aria-label={ariaLabel}>
     <g aria-hidden="true">
       {shapes.map((s) => <path d={s.d} class={s.hl ? 'map-land map-hl' : 'map-land'} />)}
+      {arcs.map((a) => <path class="map-arc" d={a.d} pathLength="1" data-year={a.year} />)}
       {labels.map((l) => <text x={l.x} y={l.y} class="map-label" text-anchor="middle">{l.text}</text>)}
     </g>
     {dots.map((d, i) => (
-      <a href={d.href} class="map-dot" aria-label={d.label}>
+      <a href={d.href} class="map-dot" aria-label={d.label} data-years={d.years.join(',')} data-cc={d.cc}>
         <title>{d.label}</title>
         <circle class={`map-pulse p${i % 5}`} cx={d.x} cy={d.y} r={6 + Math.min(d.n - 1, 4) * 2} />
         <circle class="map-pt" cx={d.x} cy={d.y} r={6 + Math.min(d.n - 1, 4) * 2} />
@@ -74,8 +88,22 @@ const ariaLabel = lang === 'tr' ? 'Proje konumları haritası' : 'Map of project
       </a>
     ))}
   </svg>
+  {!compact && (
+    <div class="map-ctrl" data-map-ctrl hidden>
+      <button type="button" class="chip map-play" data-play data-label-play={ui.play} data-label-pause={ui.pause}>{ui.play}</button>
+      <label class="map-year"><span class="visually-hidden">{ui.yearLabel}</span>
+        <input type="range" min={minYear} max={maxYear} step="1" value={maxYear} data-year-input />
+      </label>
+      <output class="map-readout" data-year-out>{maxYear}</output>
+      <span class="map-count" data-count-out data-tpl-p={ui.mapCounter(0, 0)}>{ui.mapCounter(refs.length, used.size)}</span>
+    </div>
+  )}
   <figcaption>
     <span>{lang === 'tr' ? 'Nokta üzerine gelin ya da tıklayın.' : 'Hover or click a point.'}</span>
     <span class="map-src">{lang === 'tr' ? 'Harita verisi: Natural Earth' : 'Map data: Natural Earth'}</span>
   </figcaption>
 </figure>
+
+<script>
+  import '../scripts/map';
+</script>

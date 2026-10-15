@@ -7,6 +7,7 @@ location: "Kandıra, Kocaeli"
 country: TR
 coords: [41.07, 30.15]   # enlem, boylam (harita için)
 sector: water
+schematic: drinking
 scope: [plc, scada, commissioning, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 role: "Otomasyon uzmanı"

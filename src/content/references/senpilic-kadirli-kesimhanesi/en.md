@@ -7,6 +7,7 @@ location: "Kadirli, Osmaniye"
 country: TR
 coords: [37.37, 36.1]   # enlem, boylam (harita için)
 sector: food
+schematic: poultry
 scope: [plc, scada, commissioning, automation, subcontract]
 technologies: ["Mitsubishi Electric PLC"]
 client: "Şenpiliç"

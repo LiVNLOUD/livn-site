@@ -7,6 +7,7 @@ location: "İzmir"
 country: TR
 coords: [38.42, 27.14]   # enlem, boylam (harita için)
 sector: water
+schematic: pumping
 scope: [plc, scada, commissioning, modernization, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 client: "İZSU"

@@ -7,6 +7,7 @@ location: "Kırka, Eskişehir"
 country: TR
 coords: [39.29, 30.53]   # enlem, boylam (harita için)
 sector: mining
+schematic: pneumatic
 scope: [plc, scada, commissioning, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 client: "Eti Maden"

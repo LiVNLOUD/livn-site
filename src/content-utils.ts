@@ -17,7 +17,7 @@ export async function twinOf<C extends Folder>(c: C, entry: CollectionEntry<C>, 
 }
 
 // TR ve EN dosyalarında dilden bağımsız alanlar aynı olmalı; değilse derleme durur.
-const SHARED_REFERENCE_FIELDS = ['year', 'month', 'country', 'coords', 'sector', 'scope', 'featured', 'draft'] as const;
+const SHARED_REFERENCE_FIELDS = ['year', 'month', 'country', 'coords', 'sector', 'schematic', 'scope', 'featured', 'draft'] as const;
 let checked = false;
 async function checkReferenceTwins() {
   if (checked) return;

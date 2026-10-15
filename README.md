@@ -35,6 +35,8 @@ location: "İzmir"
 country: TR                               # TR, AZ, RO, UZ… (iki büyük harf)
 coords: [38.42, 27.14]                    # enlem, boylam: proje haritasındaki nokta (Google Haritalar'da sağ tık → koordinat)
 sector: water                             # water | energy | process | mining | oil-gas | food
+schematic: drinking                       # isteğe bağlı çizim türü: wastewater, drinking, pumping, power, demi, geothermal,
+                                          # nitrate, salt, acid, granulation, pneumatic, oil, feed, poultry
 scope: [plc, scada, commissioning]        # electrical, automation, plc, scada, hmi, instrumentation,
                                           # panel, engineering, commissioning, monitoring, modernization, subcontract
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"] # yalnız ad, logo yok
@@ -51,7 +53,7 @@ draft: false                              # true ise yayınlanmaz
 İsteğe bağlı açıklama metni: projenin amacı, yapılan iş, zorluklar, sonuç…
 ```
 
-**Kurallar:** `year`, `month`, `country`, `coords`, `sector`, `scope`, `featured`, `draft` alanları ve görsel sayısı `tr.md` ile `en.md`'de aynı olmalıdır (farklıysa derleme durur). Yalnız metinler (`title`, `summary`, `location`, `role`, `alt`, gövde) çevrilir.
+**Kurallar:** `year`, `month`, `country`, `coords`, `sector`, `schematic`, `scope`, `featured`, `draft` alanları ve görsel sayısı `tr.md` ile `en.md`'de aynı olmalıdır (farklıysa derleme durur). Yalnız metinler (`title`, `summary`, `location`, `role`, `alt`, gövde) çevrilir.
 
 ### Görseller
 

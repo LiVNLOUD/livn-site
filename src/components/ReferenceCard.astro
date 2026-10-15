@@ -9,8 +9,8 @@ const { entry, lang, headingLevel = 'h3' } = Astro.props;
 const d = entry.data;
 const H = headingLevel;
 ---
-<article class="card">
-  <div class="card-media"><Media cover={d.cover} sector={d.sector} seed={slugOf(entry.id)} caption={t(lang).schematic} /></div>
+<article class="card reveal">
+  <div class="card-media"><Media cover={d.cover} sector={d.sector} variant={d.schematic} seed={slugOf(entry.id)} caption={t(lang).schematic} /></div>
   <div class="card-body">
     <p class="meta"><span>{formatMonth(d.year, d.month, lang)}</span><span>{d.location}</span><span class="cc">{d.country}</span></p>
     <H><a href={PATHS[lang].reference(slugOf(entry.id))}>{d.title}</a></H>

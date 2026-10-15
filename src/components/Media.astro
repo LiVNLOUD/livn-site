@@ -6,6 +6,8 @@ import Mimic from './Mimic.astro';
 interface Props {
   cover?: { src: ImageMetadata; alt: string };
   sector: string;
+  variant?: string;
+  status?: [string, string];
   seed?: string;
   caption?: string;
   tag?: string;
@@ -14,10 +16,10 @@ interface Props {
   sizes?: string;
   eager?: boolean;
 }
-const { cover, sector, seed, caption, tag, live = false, widths = [400, 640, 960], sizes = '(min-width: 1000px) 360px, (min-width: 640px) 50vw, 100vw', eager = false } = Astro.props;
+const { cover, sector, variant, status, seed, caption, tag, live = false, widths = [400, 640, 960], sizes = '(min-width: 1000px) 360px, (min-width: 640px) 50vw, 100vw', eager = false } = Astro.props;
 ---
 {cover ? (
   <Picture src={cover.src} alt={cover.alt} widths={widths} sizes={sizes} formats={['avif', 'webp']} loading={eager ? 'eager' : 'lazy'} decoding="async" />
 ) : (
-  <div class="plate"><Mimic sector={sector} seed={seed} caption={caption} tag={tag} live={live} /></div>
+  <div class="plate"><Mimic sector={sector} variant={variant} status={status} seed={seed} caption={caption} tag={tag} live={live} /></div>
 )}

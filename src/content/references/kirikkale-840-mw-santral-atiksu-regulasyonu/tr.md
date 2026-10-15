@@ -7,6 +7,7 @@ location: "Kırıkkale"
 country: TR
 coords: [39.85, 33.51]   # enlem, boylam (harita için)
 sector: energy
+schematic: wastewater
 scope: [plc, scada, commissioning, electrical, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 client: "Gama & Idom"

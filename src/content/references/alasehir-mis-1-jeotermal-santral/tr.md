@@ -7,6 +7,7 @@ location: "Alaşehir, Manisa"
 country: TR
 coords: [38.35, 28.52]   # enlem, boylam (harita için)
 sector: energy
+schematic: geothermal
 scope: [plc, scada, commissioning, electrical, automation, subcontract]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 role: "Otomasyon uzmanı"

@@ -7,6 +7,7 @@ location: "İzmir"
 country: TR
 coords: [38.42, 27.14]   # enlem, boylam (harita için)
 sector: water
+schematic: wastewater
 scope: [plc, scada, commissioning, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 role: "Otomasyon uzmanı"

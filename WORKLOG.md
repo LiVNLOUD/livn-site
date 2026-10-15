@@ -51,3 +51,13 @@
 - Notlar: 3 teknik yazı (loop check, S7-1500 program yapısı, WinCC alarm yönetimi), TR+EN, RSS (`/notlar/rss.xml`, `/en/notes/rss.xml`). Genel mühendislik pratikleri; kullanıcı gözden geçirecek.
 - Gizlilik sayfası: `/gizlilik/`, `/en/privacy/` (çerezsiz analitik, barındırma, KVKK md. 11).
 - kaan@livn.tr (Email Routing): token yetkisi yok → kullanıcı panelden ya da token'a izin ekleyerek.
+
+### Keşke listesi — 2. aşama: A bölümü (önizleme, onay bekliyor)
+- A1 proses hattı: ≥1200 px'te bölümlerin solunda boru; kaydırmaya bağlı dolar (CSS scroll-driven, `@supports`), başlıklarda enstrüman düğümü yanar.
+- A2 harita zaman yolculuğu: Oynat/Durdur, yıl kaydırıcısı, sayaç; görünür olunca bir kez kendiliğinden oynar; İzmir'den yurt dışı projelere yay.
+- A3 HMI paneli: tank/pompa/vana, LT/FT/PT değerleri, 60 sn trend; "SİMÜLASYON" etiketli; görünmezken durur.
+- A4 sayfa geçişleri: cross-document View Transitions; tıklanan kartın çizimi ve başlığı detay kapağına dönüşür (ad CSSOM ile atanır, CSP uyumlu).
+- A5 sayaçlar (IntersectionObserver) ve süzülerek giren öğeler (`translate`/`scale`, hover ile çakışmaz).
+- A6 14 çizim türü (`schematic` alanı), detay sayfasında devreye alma sırası + "DEVREYE ALINIYOR… → ÇALIŞIYOR".
+- A7 ilk ziyaret açılışı: karar `theme.js` içinde (çizimden önce), 1,4 sn, tıkla/tuşla atlanır, CSS ile 2,6 sn'de kendiliğinden kalkar.
+- Hepsi `prefers-reduced-motion` ile kapanır. Lighthouse (yerel, mobil): 96–100 / 100 / 100 / 100; CLS ≈ 0, TBT 0 ms.

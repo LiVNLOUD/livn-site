@@ -33,7 +33,7 @@ const portrait = Object.values(portraits)[0]?.default;
         <h2 class="section-title">{ui.experience}</h2>
         <ol class="timeline">
           {d.experience.map((x) => (
-            <li>
+            <li class="reveal">
               <span class="period">{x.from ? `${formatPeriod(x.from, lang)} – ` : ''}{x.to ? formatPeriod(x.to, lang) : ui.present}</span>
               <h3>{x.role}</h3>
               {(x.company || x.location) && (

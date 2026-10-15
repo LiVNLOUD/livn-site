@@ -6,6 +6,7 @@ location: "İzmir"
 country: TR
 coords: [38.42, 27.14]   # enlem, boylam (harita için)
 sector: process
+schematic: granulation
 scope: [plc, scada, commissioning, electrical, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 role: "Elektrik ve otomasyon sorumlusu"

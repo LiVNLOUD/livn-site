@@ -7,6 +7,7 @@ location: "Agsu, Azerbaijan"
 country: AZ
 coords: [40.57, 48.4]   # enlem, boylam (harita için)
 sector: food
+schematic: feed
 scope: [plc, scada, commissioning, automation, subcontract]
 technologies: ["Mitsubishi Electric PLC"]
 client: "AgroPark"

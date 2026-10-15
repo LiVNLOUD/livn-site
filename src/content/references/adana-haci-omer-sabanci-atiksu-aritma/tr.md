@@ -7,6 +7,7 @@ location: "Adana"
 country: TR
 coords: [37.0, 35.32]   # enlem, boylam (harita için)
 sector: water
+schematic: wastewater
 scope: [plc, scada, commissioning, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 role: "Otomasyon uzmanı"

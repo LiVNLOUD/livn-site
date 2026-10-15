@@ -45,7 +45,7 @@ const hasBody = !!entry.body?.trim();
 
     {d.cover
       ? <figure class="cover"><Media cover={d.cover} sector={d.sector} widths={[640, 960, 1280, 1920]} sizes="(min-width: 1120px) 1064px, 100vw" eager /></figure>
-      : <div class="cover-plate"><Media sector={d.sector} seed={slugOf(entry.id)} caption={ui.schematic} tag={`${d.location.split(',')[0].toLocaleUpperCase(ui.locale)} · ${d.year}`} live /></div>}
+      : <div class="cover-plate"><Media sector={d.sector} variant={d.schematic} status={[ui.commissioning, ui.running]} seed={slugOf(entry.id)} caption={ui.schematic} tag={`${d.location.split(',')[0].toLocaleUpperCase(ui.locale)} · ${d.year}`} live /></div>}
 
     {hasBody && <div class="prose"><Content /></div>}
     <Gallery items={d.gallery} title={ui.gallery} />

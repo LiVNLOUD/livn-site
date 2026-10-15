@@ -7,6 +7,7 @@ location: "Ereğli, Zonguldak"
 country: TR
 coords: [41.28, 31.42]   # enlem, boylam (harita için)
 sector: water
+schematic: drinking
 scope: [plc, scada, commissioning, automation]
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 role: "Otomasyon uzmanı"

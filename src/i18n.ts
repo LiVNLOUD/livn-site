@@ -10,6 +10,7 @@ export const UI = {
     switchLang: 'English',
     switchLangShort: 'EN',
     themeToggle: 'Açık / koyu tema',
+    motionToggle: 'Animasyonları aç / kapat',
     skip: 'İçeriğe geç',
     home: 'Ana sayfa',
     // Ana sayfa
@@ -103,6 +104,7 @@ export const UI = {
     switchLang: 'Türkçe',
     switchLangShort: 'TR',
     themeToggle: 'Light / dark theme',
+    motionToggle: 'Turn animations on / off',
     skip: 'Skip to content',
     home: 'Home',
     ctaReferences: 'View references',

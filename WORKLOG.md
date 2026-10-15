@@ -75,3 +75,8 @@
 - Playwright (masaüstü + mobil): yatay kaydırma yok, sayfa hatası yok; açılış kalkıyor, harita zaman yolculuğu 2026'da "21 proje · 4 ülke" ile bitiyor, "Seç" düğmesi komutu seçiyor.
 - Lighthouse (canlı, mobil): performans 96–100, erişilebilirlik 100, SEO 100; best-practices 96 yalnız bu ortamın ağının analitik betiğini engellemesinden (gerçek ziyaretçide oluşmaz).
 - Kullanıcı Gmail "farklı adresten gönder" ayarını tamamladı.
+
+### Animasyonlar görünmüyordu (2026-10-15)
+- Neden: kullanıcının sisteminde "hareketi azalt" (Windows → Animasyon efektleri kapalı) açık; site bu sinyalde tüm animasyonları kapatıyordu.
+- Çözüm: `<html class="motion">` sınıfı (public/theme.js): sitedeki "Animasyonlar" düğmesi > sistem ayarı; seçim localStorage'da. CSS'teki tüm hareket kuralları `:root.motion` altında.
+- HMI değerleri/trend ve sayaçlar artık her durumda çalışır (veri değişimi, hareket değil). Açılış, akış, dönme, kaydırma animasyonları ve harita otomatik oynatma yalnız `motion` ile.

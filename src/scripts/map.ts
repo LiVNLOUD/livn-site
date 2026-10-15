@@ -1,7 +1,7 @@
 // A2: Harita üzerinde kariyer zaman yolculuğu. JavaScript yoksa harita son hâliyle görünür.
 const fig = document.querySelector<HTMLElement>('.map');
 const ctrl = document.querySelector<HTMLElement>('[data-map-ctrl]');
-const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const calm = !document.documentElement.classList.contains('motion');
 
 if (fig && ctrl) {
   const input = ctrl.querySelector<HTMLInputElement>('[data-year-input]')!;

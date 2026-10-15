@@ -1,6 +1,6 @@
 // Ana sayfa etkileşimleri: açılış (ilk ziyaret), sayaçlar, HMI simülasyonu.
-// "Hareketi azalt" tercihinde hiçbiri çalışmaz; sayfa doğrudan son hâliyle görünür.
-const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Açılış yalnız <html class="motion"> iken çalışır (bkz. public/theme.js).
+// HMI değerleri ve sayaçlar hareket değil veri değişimidir; her durumda çalışır.
 
 // --- A7: İlk ziyarette kısa "devreye alma" açılışı ---
 function boot() {
@@ -21,7 +21,7 @@ function boot() {
 // --- A5: Sayaçlar görünür olunca sıfırdan sayar ---
 function counters() {
   const els = [...document.querySelectorAll<HTMLElement>('[data-count]')];
-  if (calm || !('IntersectionObserver' in window)) return;
+  if (!('IntersectionObserver' in window)) return;
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) {
       if (!e.isIntersecting) continue;
@@ -44,7 +44,7 @@ function counters() {
 // --- A3: HMI simülasyonu (değerler gerçek değildir; panel "SİMÜLASYON" etiketlidir) ---
 function hmi() {
   const root = document.querySelector<HTMLElement>('[data-hmi]');
-  if (!root || calm) return;
+  if (!root) return;
   const level = root.querySelector<SVGRectElement>('[data-level]');
   const line = root.querySelector<SVGPolylineElement>('[data-trend]');
   const v = (k: string) => root.querySelector<SVGTSpanElement>(`[data-v="${k}"]`);

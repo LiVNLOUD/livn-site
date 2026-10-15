@@ -1,7 +1,7 @@
 ---
 title: "Yıldırım Kimya CN/MN Production Plant"
 summary: "Electrical and automation works for a plant producing calcium nitrate (CN) and magnesium nitrate (MN) in granule and pastille form."
-year: 2025
+year: 2026
 location: "Bursa"
 country: TR
 coords: [40.19, 29.06]   # enlem, boylam (harita için)

@@ -31,5 +31,6 @@
 - İşveren siteleri: Sistemas → sistemasteknoloji.com (arama motorunda güncel), Yıldırım Kimya → yildirimkimya.com.tr. Geotek (geotekotomasyon.com) ve Espro (esprootomasyon.com.tr) yayında olduğu doğrulanamadı → bağlantı konmadı. Bu ortamdan dış sitelere erişim kapalı.
 - LinkedIn: ağ politikası engelli (linkedin.com, media.licdn.com); profil ve portre alınamadı.
 - Fotoğraf yerine: projeye özel SCADA mimik tarzı şematik çizim (`Mimic.astro`, 6 sektör, etiketli) + derlemede üretilen proje haritası (`ProjectMap.astro`, Natural Earth/world-atlas, d3-geo; betik yok). Referans listesinde `?place=` ile konum süzgeci.
-- **Yer tutucu (kullanıcı onayı bekliyor):** CN/MN projesi yılı 2025 ve Sistemas bitişi 2025 tahmini; Yıldırım Kimya başlangıç tarihi boş.
+- Tarihler kullanıcıdan: Sistemas 2020-10 – 2026-02, Yıldırım Kimya 2026-02 –; CN/MN projesi 2026 (ay belirtilmedi).
+- Geotek dönemi (Ağsu, Şenpiliç): Mitsubishi Electric PLC (kullanıcı onayı). Portre kullanıcıdan (src/assets/portre.jpg).
 - Lighthouse (yerel, mobil): /, /referanslar/, detay → 95–100 / 100 / 100 / 100.

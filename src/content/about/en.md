@@ -2,14 +2,15 @@
 title: About
 lead: For {years} years I have worked in electrical and automation, with a focus on commissioning in the field. Today I am the electrical & automation lead at Yıldırım Kimya.
 experience:
-  - role: Electrical & automation lead
+  - from: "2026-02"
+    role: Electrical & automation lead
     company: Yıldırım Kimya
     url: https://www.yildirimkimya.com.tr
     location: Bursa
     points:
       - My last project at Sistemas was the CN/MN (calcium and magnesium nitrate) granule and pastille production plant built for Yıldırım Kimya. After the project I joined the client company.
   - from: "2020-10"
-    to: "2025"
+    to: "2026-02"
     role: Electrical & automation lead
     company: Sistemas
     url: https://www.sistemasteknoloji.com
@@ -41,6 +42,7 @@ tools:
   - Siemens TIA Portal
   - Siemens WinCC SCADA
   - ABB Automation Builder
+  - Mitsubishi Electric PLC
   - Phoenix Contact Visu+
   - HMI applications (various brands)
   - EPLAN

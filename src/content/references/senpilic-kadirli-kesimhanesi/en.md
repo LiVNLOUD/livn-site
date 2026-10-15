@@ -8,7 +8,7 @@ country: TR
 coords: [37.37, 36.1]   # enlem, boylam (harita için)
 sector: food
 scope: [plc, scada, commissioning, automation, subcontract]
-technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
+technologies: ["Mitsubishi Electric PLC"]
 client: "Şenpiliç"
 role: "Project lead"
 # Fotoğraf eklemek için: görseli bu klasöre yükleyin ve aşağıdaki satırları açın (README → Görseller).

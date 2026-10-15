@@ -1,7 +1,7 @@
 ---
 title: "Yıldırım Kimya CN/MN Üretim Tesisi"
 summary: "Kalsiyum nitrat (CN) ve magnezyum nitratın (MN) granül ve pastil formda üretildiği tesisin elektrik ve otomasyon işleri."
-year: 2025
+year: 2026
 location: "Bursa"
 country: TR
 coords: [40.19, 29.06]   # enlem, boylam (harita için)

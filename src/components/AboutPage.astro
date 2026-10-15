@@ -46,7 +46,7 @@ const portrait = Object.values(portraits)[0]?.default;
         </ol>
       </div>
       <aside>
-        {portrait && <figure class="portrait"><Picture src={portrait} alt={SITE.name} widths={[360, 720]} sizes="360px" formats={['avif', 'webp']} /></figure>}
+        {portrait && <figure class="portrait"><Picture src={portrait} alt={lang === 'tr' ? `${SITE.name} portresi` : `Portrait of ${SITE.name}`} widths={[220, 400]} sizes="220px" formats={['avif', 'webp']} loading="eager" /></figure>}
         <section class="side-card contact-list" id="contact" aria-labelledby="c-h">
           <h2 id="c-h">{ui.contact}</h2>
           <ul>

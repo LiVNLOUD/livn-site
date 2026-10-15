@@ -410,7 +410,8 @@ p { text-wrap: pretty; }
 .side-card li:last-child { border-bottom: 0; }
 .side-card .sub { display: block; color: var(--muted); font-size: .86rem; }
 .contact-list a { font-weight: 560; overflow-wrap: anywhere; }
-.portrait { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); margin-bottom: 16px; }
+.portrait { width: 200px; aspect-ratio: 1; border-radius: 50%; overflow: hidden; margin: 0 0 20px; border: 2px solid var(--border-strong); box-shadow: 0 0 0 6px var(--accent-soft); }
+.portrait img, .avatar img, img.avatar { width: 100%; height: 100%; object-fit: cover; transform: scale(1.04); }
 
 /* --- Notlar --- */
 .notes { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--border); }
@@ -490,3 +491,7 @@ main { min-height: 50vh; }
   .map .map-label { font-size: 24px; }
   .map figcaption .map-src { display: none; }
 }
+
+.contact-who { display: flex; gap: 20px; align-items: center; }
+.contact-who picture { flex: none; width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid var(--border-strong); }
+@media (max-width: 519px) { .contact-who { flex-direction: column; align-items: flex-start; } }

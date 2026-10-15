@@ -2,14 +2,15 @@
 title: Hakkımda
 lead: "{years} yıldır elektrik ve otomasyon alanında, sahada devreye alma odaklı çalışıyorum. Bugün Yıldırım Kimya’da elektrik ve otomasyon sorumlusuyum."
 experience:
-  - role: Elektrik ve otomasyon sorumlusu
+  - from: "2026-02"
+    role: Elektrik ve otomasyon sorumlusu
     company: Yıldırım Kimya
     url: https://www.yildirimkimya.com.tr
     location: Bursa
     points:
       - Sistemas’taki son projem, Yıldırım Kimya için kurulan CN/MN (kalsiyum ve magnezyum nitrat) granül ve pastil üretim tesisiydi. Proje sonrası müşteri firmanın bünyesine katıldım.
   - from: "2020-10"
-    to: "2025"
+    to: "2026-02"
     role: Elektrik ve otomasyon sorumlusu
     company: Sistemas
     url: https://www.sistemasteknoloji.com
@@ -41,6 +42,7 @@ tools:
   - Siemens TIA Portal
   - Siemens WinCC SCADA
   - ABB Automation Builder
+  - Mitsubishi Electric PLC
   - Phoenix Contact Visu+
   - Farklı markalarda HMI uygulamaları
   - EPLAN

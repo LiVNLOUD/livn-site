@@ -1,81 +1,74 @@
-// Ana sayfa etkileşimleri: açılış (ilk ziyaret), sayaçlar, HMI simülasyonu.
-// Açılış yalnız <html class="motion"> iken çalışır (bkz. src/scripts/theme-boot.js).
-// HMI değerleri ve sayaçlar hareket değil veri değişimidir; her durumda çalışır.
+// Ana sayfa sahnesi: tek seviye değeri dört katmanda aynı anda gösterilir.
+// OTO: seviye kendiliğinden dolar/boşalır (simülasyon). MAN: ziyaretçi tankı sürükler ya da ok tuşlarını kullanır.
+// Değer değişimi hareket sayılmaz; "hareketi azalt" açıkken de çalışır. Akış ve açılış animasyonları yalnız CSS'te (:root.motion).
 
-// --- A7: İlk ziyarette kısa "devreye alma" açılışı ---
-function boot() {
-  const html = document.documentElement;
-  const el = document.querySelector<HTMLElement>('[data-boot]');
-  if (!el) return;
-  if (!html.classList.contains('boot-pending')) { el.remove(); return; }
-  try { localStorage.setItem('livn-boot', '1'); } catch { /* yok say */ }
-  const done = () => {
-    el.classList.add('boot-out');
-    window.setTimeout(() => { html.classList.remove('boot-pending'); el.remove(); }, 420);
+const RAW_MAX = 27648; // S7 analog giriş: 4 mA = 0, 20 mA = 27648
+
+function stage(root: HTMLElement) {
+  const input = root.querySelector<HTMLInputElement>('[data-input]');
+  if (!input) return;
+  const $ = (k: string) => root.querySelector<HTMLElement>(`[data-out="${k}"]`);
+  const out = { ma: $('ma'), raw: $('raw'), pv: $('pv'), pv2: $('pv2'), al: $('al') };
+  const alarm = root.querySelector<HTMLElement>('[data-alarm]');
+  const rungHi = root.querySelector('[data-rung="hi"]');
+  const rungLo = root.querySelector('[data-rung="lo"]');
+  const modes = [...root.querySelectorAll<HTMLButtonElement>('[data-mode]')];
+  const HI = Number(root.dataset.hi ?? 80);
+  const LO = Number(root.dataset.lo ?? 20);
+  const label = { ok: root.dataset.lOk ?? '', hi: root.dataset.lHi ?? '', lo: root.dataset.lLo ?? '' };
+
+  let v = Number(input.value);
+  let auto = true;
+  let dir = 1;
+  let target = 86;
+  let last = '';
+
+  const render = () => {
+    const pv = v.toFixed(1);
+    root.style.setProperty('--lvl', String(v / 100));
+    if (out.ma) out.ma.textContent = (4 + (16 * v) / 100).toFixed(2);
+    if (out.raw) out.raw.textContent = String(Math.round((RAW_MAX * v) / 100));
+    if (out.pv) out.pv.textContent = pv;
+    if (out.pv2) out.pv2.textContent = pv;
+    input.setAttribute('aria-valuetext', `${pv} %`);
+    const state = v >= HI ? 'hi' : v <= LO ? 'lo' : 'ok';
+    if (state === last) return;
+    last = state;
+    root.classList.toggle('is-hi', state === 'hi');
+    root.classList.toggle('is-lo', state === 'lo');
+    rungHi?.classList.toggle('on', state === 'hi');
+    rungLo?.classList.toggle('on', state === 'lo');
+    if (alarm) alarm.textContent = label[state];
+    if (out.al) out.al.textContent = state === 'ok' ? 'null' : `"${state.toUpperCase()}"`;
   };
-  el.addEventListener('click', done, { once: true });
-  addEventListener('keydown', done, { once: true });
-  window.setTimeout(done, 1400);
-}
 
-// --- A5: Sayaçlar görünür olunca sıfırdan sayar ---
-function counters() {
-  const els = [...document.querySelectorAll<HTMLElement>('[data-count]')];
-  if (!('IntersectionObserver' in window)) return;
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (!e.isIntersecting) continue;
-      io.unobserve(e.target);
-      const el = e.target as HTMLElement;
-      const target = Number(el.dataset.count);
-      const t0 = performance.now();
-      const step = (now: number) => {
-        const k = Math.min(1, (now - t0) / 1300);
-        el.textContent = String(Math.round(target * (1 - Math.pow(1 - k, 3))));
-        if (k < 1) requestAnimationFrame(step);
-      };
-      el.textContent = '0';
-      requestAnimationFrame(step);
-    }
-  }, { threshold: 0.6 });
-  els.forEach((el) => io.observe(el));
-}
+  const setMode = (a: boolean) => {
+    auto = a;
+    root.classList.toggle('is-man', !a);
+    modes.forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.mode === 'auto') === a)));
+  };
 
-// --- A3: HMI simülasyonu (değerler gerçek değildir; panel "SİMÜLASYON" etiketlidir) ---
-function hmi() {
-  const root = document.querySelector<HTMLElement>('[data-hmi]');
-  if (!root) return;
-  const level = root.querySelector<SVGRectElement>('[data-level]');
-  const line = root.querySelector<SVGPolylineElement>('[data-trend]');
-  const v = (k: string) => root.querySelector<SVGTSpanElement>(`[data-v="${k}"]`);
-  const out = { lvl: v('lvl'), flow: v('flow'), p: v('p') };
-  const st = { lvl: 62.4, flow: 18.6, p: 3.42, dir: 1 };
-  const walk = (x: number, mean: number, k: number, noise: number) => x + (mean - x) * k + (Math.random() - 0.5) * noise;
-  // Trend, son 60 örnekle dolu başlar (boş çizgi görünmesin)
-  const hist: number[] = [];
-  for (let i = 0, f = 18.6; i < 60; i++) { f = walk(f, 18.6, 0.15, 0.9); hist.push(f); }
+  input.addEventListener('input', () => { setMode(false); v = Number(input.value); render(); });
+  modes.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode === 'auto')));
+
+  // Görünmezken ya da sekme arka plandayken simülasyon durur
   let visible = true;
-  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(root);
-  root.classList.add('hmi-live');
-  const tick = () => {
-    if (document.hidden || !visible) return;
-    // Seviye yavaşça dolar/boşalır; debi ve basınç küçük dalgalanır
-    st.lvl += st.dir * (0.4 + Math.random() * 0.5);
-    if (st.lvl > 82) st.dir = -1;
-    if (st.lvl < 38) st.dir = 1;
-    st.flow = walk(st.flow, 18 + (st.dir > 0 ? 1.2 : -1.2), 0.15, 0.9);
-    st.p = walk(st.p, 3.4, 0.2, 0.06);
-    hist.push(st.flow); hist.shift();
-    if (level) { const h = 96 * st.lvl / 100; level.setAttribute('y', String(30 + 96 - h)); level.setAttribute('height', String(h)); }
-    if (out.lvl) out.lvl.textContent = st.lvl.toFixed(1);
-    if (out.flow) out.flow.textContent = st.flow.toFixed(1);
-    if (out.p) out.p.textContent = st.p.toFixed(2);
-    if (line) line.setAttribute('points', hist.map((y, i) => `${(i * 360 / 59).toFixed(1)},${(64 - (y - 14) * 64 / 10).toFixed(1)}`).join(' '));
-  };
-  tick();
-  window.setInterval(tick, 600);
+  if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(root);
+
+  const rand = (a: number, b: number) => a + Math.random() * (b - a);
+  window.setInterval(() => {
+    if (!auto || document.hidden || !visible) return;
+    // Hedefe doğru rampa + küçük gürültü; hedefe varınca yön değişir (ara sıra alarm sınırlarını aşar)
+    v += dir * rand(0.35, 0.8) + (Math.random() - 0.5) * 0.3;
+    if (dir > 0 && v >= target) { dir = -1; target = rand(12, 34); }
+    else if (dir < 0 && v <= target) { dir = 1; target = rand(70, 90); }
+    v = Math.min(100, Math.max(0, v));
+    input.value = String(v);
+    render();
+  }, 380);
+
+  render();
 }
 
-boot();
-counters();
-hmi();
+const root = document.querySelector<HTMLElement>('[data-stage]');
+if (root) stage(root);

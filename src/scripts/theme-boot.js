@@ -14,9 +14,6 @@
   var motion = m === 'on' || (m !== 'off' && !reduce);
   if (motion) root.classList.add('motion');
 
-  // İlk ziyarette ana sayfada kısa açılış (ayrıntı: src/scripts/home.ts)
-  var p = location.pathname;
-  if (motion && (p === '/' || p === '/en/') && get('livn-boot') !== '1') root.classList.add('boot-pending');
 
   document.addEventListener('DOMContentLoaded', function () {
     var btn = document.querySelector('.theme-btn:not(.motion-btn)');

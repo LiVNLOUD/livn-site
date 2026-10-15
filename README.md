@@ -4,7 +4,7 @@ Kaan Akdağ'ın kişisel sitesi: otomasyon referansları, yazılım projeleri, n
 
 | Bölüm | Türkçe | English | İçerik klasörü |
 |---|---|---|---|
-| Ana sayfa | `/` | `/en/` | `src/site.ts` (karşılama metni) |
+| Ana sayfa | `/` | `/en/` | `src/components/Home.astro` (tek sahne: başlık, katman metinleri) |
 | Referanslar | `/referanslar/` | `/en/references/` | `src/content/references/` |
 | Yazılım | `/yazilim/` | `/en/software/` | `src/content/software/` |
 | Notlar | `/notlar/` | `/en/notes/` | `src/content/notes/` |
@@ -42,7 +42,7 @@ scope: [plc, scada, commissioning]        # electrical, automation, plc, scada, 
 technologies: ["Siemens S7-1500", "WinCC Runtime Professional"] # yalnız ad, logo yok
 role: "Otomasyon uzmanı"                   # isteğe bağlı
 client: "Müşteri A.Ş."                      # isteğe bağlı; detay sayfasında "Müşteri" satırı
-featured: true                            # ana sayfada öne çıkar (en fazla 6 gösterilir)
+featured: true                            # şu an kullanılmıyor (ana sayfa tek sahne); ileride öne çıkarma için saklanır
 cover: { src: ./kapak.jpg, alt: "Pano içinden genel görünüm" }
 gallery:
   - { src: ./1.jpg, alt: "SCADA genel bakış ekranı" }
@@ -88,7 +88,7 @@ Metin… **kalın**, `kod`, listeler, bağlantılar, tablolar kullanılabilir.
 
 - Metin, deneyim, araçlar, eğitim ve diller: `src/content/about/tr.md` ve `en.md`.
 - Portre: `src/assets/portre.jpg` adıyla yükleyin; Hakkımda sayfasında kendiliğinden görünür.
-- E-posta, LinkedIn, GitHub, şehir ve ana sayfa karşılama metni: `src/site.ts`.
+- E-posta, LinkedIn, GitHub, şehir ve site açıklaması: `src/site.ts`. Ana sayfa metinleri: `src/components/Home.astro`.
 - Düğme ve başlık metinleri: `src/i18n.ts`. Renkler ve görünüm: `src/styles/global.css`.
 
 ## Bilgisayarda önizleme (isteğe bağlı)

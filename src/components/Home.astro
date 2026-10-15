@@ -1,218 +1,172 @@
 ---
-import EmailLink from './EmailLink.astro';
+// Ana sayfa: tek sahne. Bir seviye vericisinin sinyali dört katmandan geçer:
+// elektrik (4–20 mA) → otomasyon (PLC ham değeri, merdiven) → SCADA (operatör ekranı) → yazılım (OPC UA okuması).
+// Ziyaretçi tankı sürükleyerek seviyeyi değiştirir; tüm katmanlar aynı anda güncellenir (src/scripts/home.ts).
 import Base from '../layouts/Base.astro';
-import CopyCommand from './CopyCommand.astro';
-import ReferenceCard from './ReferenceCard.astro';
-import SectorIcon from './SectorIcon.astro';
-import ProjectMap from './ProjectMap.astro';
 import { personSchema } from '../lib/schema';
-import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import { SITE, withYears, type Lang } from '../site';
-import { SECTORS } from '../content.config';
-import { t, PATHS, SECTOR_LABELS } from '../i18n';
-import { getReferences, getSoftware, slugOf } from '../content-utils';
+import { PATHS } from '../i18n';
+import { getReferences } from '../content-utils';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-const ui = t(lang);
 const P = PATHS[lang];
 const intro = SITE.intro[lang];
 
 const refs = await getReferences(lang);
-const featured = refs.filter((r) => r.data.featured).slice(0, 6);
-const log = refs.slice(0, 7);
-const years = refs.map((r) => r.data.year);
-const sectorCounts = SECTORS.map((s) => ({ s, n: refs.filter((r) => r.data.sector === s).length })).filter((x) => x.n > 0);
 const countries = new Set(refs.map((r) => r.data.country)).size;
-const yearsInField = new Date().getFullYear() - SITE.since;
-const software = (await getSoftware(lang))[0];
 const portrait = Object.values(import.meta.glob<{ default: ImageMetadata }>('../assets/portre.{jpg,jpeg,png,webp}', { eager: true }))[0]?.default;
 
-// Yetkinlikler: CV'deki görev ve araçlardan
-const caps = {
-  tr: [
-    { h: 'PLC ve SCADA', p: 'PLC yazılımı, SCADA ve HMI ekranları; Siemens TIA Portal, WinCC, ABB Automation Builder, Phoenix Contact Visu+.' },
-    { h: 'Elektrik projesi', p: 'EPLAN ile elektrik ve pano projeleri; fikir aşamasından temel ve detay mühendisliğe.' },
-    { h: 'Devreye alma', p: 'Sahada test, devreye alma ve arıza giderme; proses kontrolünün iyileştirilmesi.' },
-    { h: 'Saha koordinasyonu', p: 'Kurulum ve devreye almada disiplinler arası ekiplerle çalışma; standart ve iş güvenliği uyumu.' },
-  ],
-  en: [
-    { h: 'PLC & SCADA', p: 'PLC software, SCADA and HMI screens; Siemens TIA Portal, WinCC, ABB Automation Builder, Phoenix Contact Visu+.' },
-    { h: 'Electrical design', p: 'Electrical and panel design in EPLAN; basic and detailed engineering from concept onwards.' },
-    { h: 'Commissioning', p: 'Testing, commissioning and troubleshooting on site; improving process control.' },
-    { h: 'Site coordination', p: 'Working with multidisciplinary teams through installation and start-up; standards and safety compliance.' },
-  ],
+// Başlangıç seviyesi (betik yoksa da tutarlı görünsün diye tüm değerler bundan hesaplanır)
+const L0 = 56;
+const HI = 80;
+const LO = 20;
+const ma0 = (4 + (16 * L0) / 100).toFixed(2);
+const raw0 = Math.round((27648 * L0) / 100);
+const pv0 = L0.toFixed(1);
+
+const c = {
+  tr: {
+    title: 'Sahadan koda.',
+    lead: 'Sahadaki bir vericinin 4–20 mA sinyali PLC’de sayıya, SCADA’da ekrana, yazılımda veriye dönüşür. {years} yıldır bu hattın her halkasını kuruyorum.',
+    hint: 'Değerler simülasyondur. Seviyeyi değiştirmek için tankı sürükleyin.',
+    level: 'T-101 tank seviyesi',
+    mode: 'Çalışma modu', auto: 'OTO', man: 'MAN',
+    layers: [
+      { h: 'Elektrik', what: '2 telli 4–20 mA verici' },
+      { h: 'Otomasyon', what: 'PLC analog girişi %IW64' },
+      { h: 'SCADA', what: 'Operatör ekranında LT-101' },
+      { h: 'Yazılım', what: 'OPC UA ile okunan veri' },
+    ],
+    ok: 'Normal', hi: 'Yüksek seviye alarmı', lo: 'Düşük seviye alarmı',
+    proof: `Bu hattı ${SITE.since}’den bu yana ${countries} ülkede ${refs.length} tesiste kurdum.`,
+    refs: 'Referansları gör', contact: 'İletişim',
+  },
+  en: {
+    title: 'From field to code.',
+    lead: 'A field transmitter’s 4–20 mA signal becomes a number in the PLC, a value on the SCADA screen and data in software. For {years} years I have built every link of that chain.',
+    hint: 'Values are simulated. Drag the tank to change the level.',
+    level: 'T-101 tank level',
+    mode: 'Operating mode', auto: 'AUTO', man: 'MAN',
+    layers: [
+      { h: 'Electrical', what: '2-wire 4–20 mA transmitter' },
+      { h: 'Automation', what: 'PLC analogue input %IW64' },
+      { h: 'SCADA', what: 'LT-101 on the operator screen' },
+      { h: 'Software', what: 'Data read over OPC UA' },
+    ],
+    ok: 'Normal', hi: 'High level alarm', lo: 'Low level alarm',
+    proof: `Since ${SITE.since} I have built this chain at ${refs.length} plants in ${countries} countries.`,
+    refs: 'See references', contact: 'Contact',
+  },
 }[lang];
-const ym = (y: number, m?: number) => (m ? `${y}·${String(m).padStart(2, '0')}` : String(y));
+
+// 4–20 mA ölçeği: 200 birimlik çizgi, 10'dan başlar
+const maTicks = [4, 8, 12, 16, 20];
 ---
 <Base lang={lang} description={withYears(intro.description)} jsonLd={{ '@graph': [{ '@type': 'WebSite', '@id': `${SITE.url}/#website`, url: SITE.url, name: SITE.name, inLanguage: lang, publisher: { '@id': `${SITE.url}/#person` } }, personSchema(lang, portrait?.src)] }}>
-  <section class="hero">
-    <div class="wrap hero-grid">
-      <div class="hero-copy">
-        <p class="eyebrow"><span class="led" aria-hidden="true"></span>{intro.eyebrow} · {SITE.location[lang]}</p>
-        <h1>{intro.title}</h1>
-        <p class="lead">{withYears(intro.lead)}</p>
-        <div class="btns">
-          <a class="btn btn-primary" href={P.references}>{ui.ctaReferences}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-          </a>
-          <a class="btn" href={P.about + '#contact'}>{ui.ctaContact}</a>
-        </div>
+  <section class="stage" aria-labelledby="stage-h" data-stage data-hi={HI} data-lo={LO} data-l-ok={c.ok} data-l-hi={c.hi} data-l-lo={c.lo}>
+    <div class="wrap stage-inner">
+      <div class="stage-head">
+        <h1 id="stage-h">{c.title}</h1>
+        <p class="stage-lead">{withYears(c.lead)}</p>
       </div>
-      <div class="hmi log" role="group" aria-labelledby="log-h" data-hmi>
-        <div class="log-head"><span class="led" aria-hidden="true"></span><span id="log-h">HMI · {ui.logTitle}</span><span class="sim">{ui.simulation}</span></div>
-        <div class="hmi-screen" aria-hidden="true">
-          <svg class="hmi-mimic" viewBox="0 0 360 150">
-            <defs><clipPath id="hmi-tank"><rect x="24" y="30" width="62" height="96" rx="6" /></clipPath></defs>
-            <path class="m-pipe" d="M8 22h46v8" /><path class="m-flow" d="M8 22h46v8" />
-            <rect class="m-eq" x="24" y="30" width="62" height="96" rx="6" />
-            <rect class="hmi-level" x="24" y="66" width="62" height="60" clip-path="url(#hmi-tank)" data-level />
-            <path class="m-thin" d="M30 54h8M30 78h8M30 102h8" />
-            <text x="55" y="146" class="hmi-tag">T-101</text>
-            <path class="m-pipe" d="M86 116h40" /><path class="m-flow" d="M86 116h40" />
-            <circle class="m-eq" cx="142" cy="116" r="16" />
-            <g class="hmi-impeller"><path d="M142 104v24M130 116h24M133.5 107.5l17 17M150.5 107.5l-17 17" /></g>
-            <circle class="m-led hmi-run" cx="160" cy="98" r="4" />
-            <text x="142" y="146" class="hmi-tag">P-101</text>
-            <path class="m-pipe" d="M158 116h22V62h44" /><path class="m-flow" d="M158 116h22V62h44" />
-            <path class="m-eq" d="M224 52l20 10-20 10zM264 52l-20 10 20 10z" />
-            <path class="m-thin" d="M244 62V44M236 44h16" />
-            <path class="m-pipe" d="M264 62h88" /><path class="m-flow" d="M264 62h88" />
-            <text x="352" y="80" class="hmi-tag hmi-end">{lang === 'tr' ? '→ PROSES' : '→ PROCESS'}</text>
-            <g class="hmi-ro"><rect x="96" y="30" width="72" height="34" rx="4" /><text x="102" y="43" class="hmi-tag">LT-101</text><text x="102" y="58" class="hmi-val"><tspan data-v="lvl">62.4</tspan> %</text></g>
-            <g class="hmi-ro"><rect x="270" y="14" width="84" height="34" rx="4" /><text x="276" y="27" class="hmi-tag">FT-102</text><text x="276" y="42" class="hmi-val"><tspan data-v="flow">18.6</tspan> m³/h</text></g>
-            <g class="hmi-ro"><rect x="190" y="96" width="76" height="34" rx="4" /><text x="196" y="109" class="hmi-tag">PT-103</text><text x="196" y="124" class="hmi-val"><tspan data-v="p">3.42</tspan> bar</text></g>
-          </svg>
-          <svg class="hmi-trend" viewBox="0 0 360 64" preserveAspectRatio="none">
-            <path class="hmi-grid" d="M0 16h360M0 32h360M0 48h360M60 0v64M120 0v64M180 0v64M240 0v64M300 0v64" />
-            <polyline class="hmi-line" data-trend points="0,34 360,34" />
-          </svg>
-          <p class="hmi-trend-label"><span>FT-102 · 60 s</span><span>m³/h</span></p>
-        </div>
-        <ol>
-          {log.slice(0, 5).map((r) => (
-            <li><a href={P.reference(slugOf(r.id))}>
-              <time datetime={r.data.month ? `${r.data.year}-${String(r.data.month).padStart(2, '0')}` : String(r.data.year)}>{ym(r.data.year, r.data.month)}</time>
-              <span class="name">{r.data.title}</span>
-              <span class="cc">{r.data.country}</span>
-            </a></li>
-          ))}
-        </ol>
-        <div class="log-foot"><span>{refs.length} {ui.statReferences} · {Math.min(...years)}–{Math.max(...years)}</span><span aria-hidden="true">&gt;<span class="cursor"></span></span></div>
-      </div>
-    </div>
-  </section>
 
-  <div class="wrap">
-    <dl class="stats">
-      <div><dt>{ui.statReferences}</dt><dd data-count={refs.length}>{refs.length}</dd></div>
-      <div><dt>{ui.statSectors}</dt><dd data-count={sectorCounts.length}>{sectorCounts.length}</dd></div>
-      <div><dt>{ui.statCountries}</dt><dd data-count={countries}>{countries}</dd></div>
-      <div><dt>{ui.statSince} ({SITE.since}–)</dt><dd><span data-count={yearsInField}>{yearsInField}</span> {lang === 'tr' ? 'yıl' : 'yrs'}</dd></div>
-    </dl>
-  </div>
-
-  <section class="section flow" aria-labelledby="what-h">
-    <span class="flow-pipe" aria-hidden="true"></span>
-    <div class="wrap">
-      <div class="section-head"><div><p class="kicker"><span class="flow-node" aria-hidden="true"></span>01</p><h2 id="what-h">{ui.whatTitle}</h2></div></div>
-      <div class="caps">
-        {caps.map((c, i) => (
-          <div class="cap reveal"><span class="num">{String(i + 1).padStart(2, '0')}</span><h3>{c.h}</h3><p>{c.p}</p></div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section flow" aria-labelledby="map-h">
-    <span class="flow-pipe" aria-hidden="true"></span>
-    <div class="wrap">
-      <div class="section-head">
-        <div><p class="kicker"><span class="flow-node" aria-hidden="true"></span>02</p><h2 id="map-h">{ui.mapTitle}</h2><p>{ui.mapLead}</p></div>
-        <a class="more" href={P.references}>{ui.allReferences}</a>
-      </div>
-      <ProjectMap refs={refs} lang={lang} />
-    </div>
-  </section>
-
-  {featured.length > 0 && (
-    <section class="section flow" aria-labelledby="feat-h">
-      <span class="flow-pipe" aria-hidden="true"></span>
-      <div class="wrap">
-        <div class="section-head">
-          <div><p class="kicker"><span class="flow-node" aria-hidden="true"></span>03</p><h2 id="feat-h">{ui.featuredTitle}</h2></div>
-          <a class="more" href={P.references}>{ui.allReferences}</a>
-        </div>
-        <div class="cards cards-3">{featured.map((r) => <ReferenceCard entry={r} lang={lang} />)}</div>
-      </div>
-    </section>
-  )}
-
-  {sectorCounts.length > 0 && (
-    <section class="section flow" aria-labelledby="sec-h">
-      <span class="flow-pipe" aria-hidden="true"></span>
-      <div class="wrap">
-        <div class="section-head"><div><p class="kicker"><span class="flow-node" aria-hidden="true"></span>04</p><h2 id="sec-h">{ui.sectorsTitle}</h2></div></div>
-        <div class="sectors">
-          {sectorCounts.map(({ s, n }) => (
-            <a class="sector-tile reveal" href={`${P.references}?sector=${s}`}>
-              <SectorIcon sector={s} />
-              <strong>{SECTOR_LABELS[lang][s]}</strong>
-              <span>{ui.projectsCount(n)}</span>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
-  )}
-
-  {software && (
-    <section class="section flow" aria-labelledby="sw-h">
-      <span class="flow-pipe" aria-hidden="true"></span>
-      <div class="wrap">
-        <div class="section-head">
-          <div><p class="kicker"><span class="flow-node" aria-hidden="true"></span>05</p><h2 id="sw-h">{ui.softwareTitle}</h2><p>{ui.softwareLead}</p></div>
-          <a class="more" href={P.software}>{ui.nav.software}</a>
-        </div>
-        <div class="feature reveal">
-          <div>
-            <p class="meta">{software.data.version && <span>v{software.data.version}</span>}{software.data.platform && <span>{software.data.platform}</span>}</p>
-            <h3>{software.data.title}</h3>
-            <p>{software.data.summary}</p>
-            <div class="btns">
-              <a class="btn" href={P.softwareItem(slugOf(software.id))}>{ui.details}</a>
-              {software.data.repo && <a class="btn" href={software.data.repo} rel="noopener">GitHub</a>}
-            </div>
+      <div class="chain">
+        <div class="field">
+          <div class="tank-wrap">
+            <svg class="tank" viewBox="0 0 140 200" aria-hidden="true">
+              <defs><clipPath id="tank-clip"><rect x="12" y="44" width="80" height="148" rx="10" /></clipPath></defs>
+              <rect class="tank-body" x="12" y="44" width="80" height="148" rx="10" />
+              <g clip-path="url(#tank-clip)"><rect class="tank-fill" x="12" y="44" width="80" height="148" /></g>
+              <path class="tank-limit" d={`M12 ${44 + 148 * (1 - HI / 100)}h80M12 ${44 + 148 * (1 - LO / 100)}h80`} />
+              <text class="tank-lim-t" x="6" y={44 + 148 * (1 - HI / 100) + 3}>H</text>
+              <text class="tank-lim-t" x="6" y={44 + 148 * (1 - LO / 100) + 3}>L</text>
+              <text class="tank-tag" x="52" y="34">T-101</text>
+              <path class="tank-imp" d="M92 72h24V41" />
+              <circle class="tank-tx" cx="116" cy="26" r="15" />
+              <text class="tank-tx-t" x="116" y="24">LT</text>
+              <text class="tank-tx-t" x="116" y="35">101</text>
+            </svg>
+            <input class="tank-input" type="range" min="0" max="100" step="0.5" value={L0} aria-label={c.level} aria-valuetext={`${pv0} %`} data-input />
           </div>
-          {software.data.command && <CopyCommand command={software.data.command} lang={lang} />}
+          <div class="field-side">
+            <div class="mode" role="group" aria-label={c.mode}>
+              <button type="button" aria-pressed="true" data-mode="auto">{c.auto}</button>
+              <button type="button" aria-pressed="false" data-mode="man">{c.man}</button>
+            </div>
+            <p class="field-hint">{c.hint}</p>
+          </div>
         </div>
-      </div>
-    </section>
-  )}
 
-  <section class="section flow" aria-labelledby="contact-h">
-    <span class="flow-pipe" aria-hidden="true"></span>
-    <div class="wrap">
-      <div class="contact-band reveal">
-        <div class="contact-who">
-          {portrait && <Picture class="avatar" src={portrait} alt={SITE.name} widths={[80, 160]} sizes="80px" formats={['avif', 'webp']} loading="lazy" />}
-          <div><h2 id="contact-h">{ui.contactTitle}</h2><p>{ui.contactLead}</p></div>
-        </div>
+        <ol class="layers">
+          <li class="wire" aria-hidden="true"><span class="wire-pulse"></span></li>
+
+          <li class="layer">
+            <span class="tap" aria-hidden="true"></span>
+            <h2>{c.layers[0].h}</h2>
+            <p class="layer-what">{c.layers[0].what}</p>
+            <p class="readout"><span class="rv" data-out="ma">{ma0}</span><span class="ru">mA</span></p>
+            <svg class="viz scale" viewBox="0 0 220 40" aria-hidden="true">
+              <path class="scale-base" d="M10 14h200" />
+              {maTicks.map((m) => <path class="scale-tick" d={`M${10 + ((m - 4) / 16) * 200} 9v10`} />)}
+              {maTicks.map((m) => <text class="scale-t" x={10 + ((m - 4) / 16) * 200} y="34">{m}</text>)}
+              <g class="scale-marker"><path d="M10 14l-6-10h12z" /></g>
+            </svg>
+          </li>
+
+          <li class="layer">
+            <span class="tap" aria-hidden="true"></span>
+            <h2>{c.layers[1].h}</h2>
+            <p class="layer-what">{c.layers[1].what}</p>
+            <p class="readout"><span class="rv" data-out="raw">{raw0}</span><span class="ru">/ 27648</span></p>
+            <svg class="viz ladder" viewBox="0 0 220 64" aria-hidden="true">
+              <path class="rail" d="M3 4v56M217 4v56" />
+              <g class="rung" data-rung="hi">
+                <path d="M3 20h64M79 20h72M171 20h46" />
+                <path class="sym" d="M67 11v18M79 11v18M155 11a12 12 0 0 0 0 18M167 11a12 12 0 0 1 0 18" />
+                <text x="73" y="8">PV&gt;{HI}</text><text x="161" y="24">HI</text>
+              </g>
+              <g class="rung" data-rung="lo">
+                <path d="M3 48h64M79 48h72M171 48h46" />
+                <path class="sym" d="M67 39v18M79 39v18M155 39a12 12 0 0 0 0 18M167 39a12 12 0 0 1 0 18" />
+                <text x="73" y="36">PV&lt;{LO}</text><text x="161" y="52">LO</text>
+              </g>
+            </svg>
+          </li>
+
+          <li class="layer">
+            <span class="tap" aria-hidden="true"></span>
+            <h2>{c.layers[2].h}</h2>
+            <p class="layer-what">{c.layers[2].what}</p>
+            <p class="readout"><span class="rv" data-out="pv">{pv0}</span><span class="ru">%</span></p>
+            <div class="viz bar" aria-hidden="true"><span class="bar-fill"></span><span class="bar-mark bar-hi"></span><span class="bar-mark bar-lo"></span></div>
+            <p class="alarm" data-alarm>{c.ok}</p>
+          </li>
+
+          <li class="layer">
+            <span class="tap" aria-hidden="true"></span>
+            <h2>{c.layers[3].h}</h2>
+            <p class="layer-what">{c.layers[3].what}</p>
+            <pre class="snippet"><code><span class="c-fn">read</span>(<span class="c-s">"ns=3;s=LT101_PV"</span>)
+{'{'}
+  value: <span class="c-n" data-out="pv2">{pv0}</span>,
+  unit: <span class="c-s">"%"</span>,
+  alarm: <span class="c-n" data-out="al">null</span>
+{'}'}</code></pre>
+          </li>
+        </ol>
+      </div>
+
+      <div class="stage-foot">
+        <p>{c.proof}</p>
         <div class="btns">
-          <EmailLink class="btn btn-primary" label={ui.email} />
-          <a class="btn" href={SITE.linkedin} rel="noopener">LinkedIn</a>
+          <a class="btn btn-primary" href={P.references}>{c.refs}</a>
+          <a class="btn" href={P.about + '#contact'}>{c.contact}</a>
         </div>
       </div>
     </div>
   </section>
-  <div class="boot" data-boot hidden aria-hidden="true">
-    <div class="boot-box">
-      <p class="boot-title">livn.tr // {SITE.name.toLocaleUpperCase(lang === 'tr' ? 'tr-TR' : 'en-GB')}</p>
-      {ui.bootLines.map((l) => <p class="boot-line">&gt; {l}</p>)}
-      <p class="boot-line boot-ok">&gt; {refs.length} / {refs.length} <span class="led"></span></p>
-    </div>
-  </div>
 </Base>
 
 <script>

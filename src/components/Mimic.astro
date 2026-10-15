@@ -6,7 +6,7 @@ interface Props { sector: string; seed?: string; caption?: string; tag?: string;
 const { sector, seed = '', caption, tag, live = false } = Astro.props;
 let h = 0;
 for (const c of seed) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-const n = (k: number) => String(100 + ((h >> (k * 3)) % 9) * 100 + k + 1);
+const n = (k: number) => String(100 + ((h >>> (k * 3)) % 9) * 100 + k + 1);
 ---
 <svg class:list={['mimic', { 'mimic-live': live }]} viewBox="0 0 640 360" aria-hidden="true" focusable="false">
   {tag && <text x="22" y="34" class="m-tag">{tag}</text>}

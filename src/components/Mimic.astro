@@ -1,0 +1,118 @@
+---
+// Fotoğrafı olmayan projeler için SCADA "mimik" ekranı tarzında şematik çizim.
+// Gerçek tesisin çizimi değildir; sektörün tipik akışını gösterir ve "şematik" olarak etiketlenir.
+// Enstrüman etiket numaraları projeye göre değişir (seed), böylece her kapak farklı görünür.
+interface Props { sector: string; seed?: string; caption?: string; tag?: string; live?: boolean }
+const { sector, seed = '', caption, tag, live = false } = Astro.props;
+let h = 0;
+for (const c of seed) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+const n = (k: number) => String(100 + ((h >> (k * 3)) % 9) * 100 + k + 1);
+---
+<svg class:list={['mimic', { 'mimic-live': live }]} viewBox="0 0 640 360" aria-hidden="true" focusable="false">
+  {tag && <text x="22" y="34" class="m-tag">{tag}</text>}
+  <text x="618" y="34" text-anchor="end" class="m-tag m-faint">{caption}</text>
+
+  {sector === 'water' && (<g>
+    <path class="m-pipe" d="M20 210H70" /><path class="m-flow" d="M20 210H70" />
+    <rect class="m-eq" x="70" y="160" width="56" height="100" rx="4" />
+    <path class="m-thin" d="M82 170v80M94 170v80M106 170v80M118 170v80" />
+    <path class="m-pipe" d="M126 210H170" /><path class="m-flow" d="M126 210H170" />
+    <rect class="m-eq" x="170" y="150" width="110" height="120" rx="4" />
+    <path class="m-level" d="M174 196h102v70H174z" />
+    <path class="m-pipe" d="M280 250h40" /><path class="m-flow" d="M280 250h40" />
+    <circle class="m-eq" cx="336" cy="250" r="16" /><path class="m-thin" d="M328 241l18 9-18 9z" />
+    <path class="m-pipe" d="M352 250h30V190h20" /><path class="m-flow" d="M352 250h30V190h20" />
+    <circle class="m-eq" cx="452" cy="190" r="50" /><circle class="m-thin" cx="452" cy="190" r="34" /><circle class="m-led" cx="452" cy="190" r="5" />
+    <path class="m-pipe" d="M502 190h20v60h20" /><path class="m-flow" d="M502 190h20v60h20" />
+    <circle class="m-eq" cx="580" cy="250" r="34" /><circle class="m-thin" cx="580" cy="250" r="22" />
+    <g class="m-inst"><path d="M225 150v-34" /><circle cx="225" cy="98" r="18" /><text x="225" y="95">LT</text><text x="225" y="107">{n(0)}</text></g>
+    <g class="m-inst"><path d="M382 220v-90" /><circle cx="382" cy="112" r="18" /><text x="382" y="109">FT</text><text x="382" y="121">{n(1)}</text></g>
+    <g class="m-inst"><path d="M580 216v-36" /><circle cx="580" cy="162" r="18" /><text x="580" y="159">AIT</text><text x="580" y="171">{n(2)}</text></g>
+  </g>)}
+
+  {sector === 'energy' && (<g>
+    <path class="m-eq" d="M70 300c18-60 18-120 0-180h110c-18 60-18 120 0 180z" />
+    <path class="m-thin" d="M84 140h82M80 280h90" />
+    <path class="m-pipe" d="M180 230h60" /><path class="m-flow" d="M180 230h60" />
+    <path class="m-eq" d="M240 190l90-30v140l-90-30z" />
+    <path class="m-pipe" d="M330 230h40" />
+    <circle class="m-eq" cx="404" cy="230" r="34" /><text x="404" y="237" class="m-sym">G</text>
+    <path class="m-pipe" d="M438 230h40" /><path class="m-flow" d="M438 230h40" />
+    <circle class="m-eq" cx="498" cy="230" r="20" /><circle class="m-eq" cx="520" cy="230" r="20" />
+    <path class="m-pipe" d="M540 230h28" />
+    <path class="m-thin" d="M590 300l-14-160h28zM570 190h40M574 230h32M564 160l52 0" />
+    <circle class="m-led" cx="590" cy="134" r="5" />
+    <g class="m-inst"><path d="M285 160v-30" /><circle cx="285" cy="112" r="18" /><text x="285" y="109">ST</text><text x="285" y="121">{n(0)}</text></g>
+    <g class="m-inst"><path d="M210 230v-80" /><circle cx="210" cy="132" r="18" /><text x="210" y="129">TT</text><text x="210" y="141">{n(1)}</text></g>
+    <g class="m-inst"><path d="M404 196v-50" /><circle cx="404" cy="128" r="18" /><text x="404" y="125">JT</text><text x="404" y="137">{n(2)}</text></g>
+  </g>)}
+
+  {sector === 'process' && (<g>
+    <rect class="m-eq" x="50" y="110" width="90" height="150" rx="40" />
+    <path class="m-thin" d="M95 92v120M75 212h40M80 200l15 12 15-12" />
+    <path class="m-level" d="M54 180h82v40c0 22-18 36-41 36s-41-14-41-36z" />
+    <path class="m-pipe" d="M140 240h44" /><path class="m-flow" d="M140 240h44" />
+    <circle class="m-eq" cx="200" cy="240" r="16" /><path class="m-thin" d="M192 231l18 9-18 9z" />
+    <path class="m-pipe" d="M216 240h20V150h24" /><path class="m-flow" d="M216 240h20V150h24" />
+    <circle class="m-eq" cx="290" cy="150" r="28" /><path class="m-thin" d="M268 150l10-12 8 24 8-24 8 24 8-12" />
+    <path class="m-pipe" d="M318 150h32" /><path class="m-flow" d="M318 150h32" />
+    <path class="m-eq" d="M350 80h70v150l-35 40-35-40z" />
+    <path class="m-level" d="M354 170h62v58l-31 36-31-36z" />
+    <path class="m-pipe" d="M385 270v20h45" /><path class="m-flow" d="M385 270v20h45" />
+    <rect class="m-eq" x="430" y="276" width="180" height="28" rx="14" />
+    <circle class="m-eq" cx="444" cy="290" r="10" /><circle class="m-eq" cx="596" cy="290" r="10" />
+    <g class="m-beads"><circle cx="470" cy="270" r="4" /><circle cx="490" cy="270" r="4" /><circle cx="510" cy="270" r="4" /><circle cx="530" cy="270" r="4" /><circle cx="550" cy="270" r="4" /><circle cx="570" cy="270" r="4" /></g>
+    <g class="m-inst"><path d="M95 110V96" /><circle cx="140" cy="78" r="18" /><path d="M122 78h-27" /><text x="140" y="75">TIC</text><text x="140" y="87">{n(0)}</text></g>
+    <g class="m-inst"><path d="M420 120h40" /><circle cx="478" cy="120" r="18" /><text x="478" y="117">LT</text><text x="478" y="129">{n(1)}</text></g>
+    <g class="m-inst"><path d="M420 200h70" /><circle cx="508" cy="200" r="18" /><text x="508" y="197">PT</text><text x="508" y="209">{n(2)}</text></g>
+  </g>)}
+
+  {sector === 'mining' && (<g>
+    <path class="m-eq" d="M60 80h90v120l-30 40h-30l-30-40z" />
+    <path class="m-level" d="M64 140h82v58l-28 38h-26l-28-38z" />
+    <rect class="m-eq" x="92" y="244" width="26" height="22" rx="3" />
+    <path class="m-pipe" d="M105 266v24h370v-150h30" /><path class="m-flow" d="M105 266v24h370v-150h30" />
+    <circle class="m-eq" cx="190" cy="290" r="22" /><path class="m-thin" d="M176 290h28M190 276v28" />
+    <path class="m-eq" d="M505 110h70v40l-25 50h-20l-25-50z" />
+    <rect class="m-eq" x="520" y="214" width="40" height="70" rx="4" />
+    <path class="m-thin" d="M540 200v14" />
+    <g class="m-inst"><path d="M150 120h40" /><circle cx="208" cy="120" r="18" /><text x="208" y="117">LT</text><text x="208" y="129">{n(0)}</text></g>
+    <g class="m-inst"><path d="M330 290v-50" /><circle cx="330" cy="222" r="18" /><text x="330" y="219">PT</text><text x="330" y="231">{n(1)}</text></g>
+    <g class="m-inst"><path d="M190 268v-14" /><circle cx="250" cy="236" r="18" /><path d="M232 236h-42v18" /><text x="250" y="233">SC</text><text x="250" y="245">{n(2)}</text></g>
+  </g>)}
+
+  {sector === 'oil-gas' && (<g>
+    <path class="m-thin" d="M60 290l40-120 40 120M70 260h60" />
+    <path class="m-eq" d="M50 168l110-28 8 14-110 28z" /><circle class="m-eq" cx="100" cy="160" r="8" />
+    <path class="m-pipe" d="M100 290h70v-60h40" /><path class="m-flow" d="M100 290h70v-60h40" />
+    <rect class="m-eq" x="210" y="200" width="170" height="60" rx="30" />
+    <path class="m-level" d="M214 236h162v4c0 10-14 16-30 16H244c-16 0-30-6-30-16z" />
+    <path class="m-pipe" d="M380 240h50v20h30" /><path class="m-flow" d="M380 240h50v20h30" />
+    <rect class="m-eq" x="460" y="200" width="110" height="100" rx="4" /><path class="m-thin" d="M460 214h110" />
+    <path class="m-pipe" d="M330 200v-90h200" /><path class="m-thin" d="M560 300V90M548 90h24" />
+    <circle class="m-led" cx="560" cy="80" r="5" />
+    <g class="m-inst"><path d="M295 200v-40" /><circle cx="295" cy="142" r="18" /><text x="295" y="139">LIC</text><text x="295" y="151">{n(0)}</text></g>
+    <g class="m-inst"><path d="M430 240v-60" /><circle cx="430" cy="162" r="18" /><text x="430" y="159">FT</text><text x="430" y="171">{n(1)}</text></g>
+    <g class="m-inst"><path d="M170 230v-50" /><circle cx="170" cy="162" r="18" /><text x="170" y="159">PT</text><text x="170" y="171">{n(2)}</text></g>
+  </g>)}
+
+  {sector === 'food' && (<g>
+    <path class="m-eq" d="M50 70h60v110l-30 30-30-30z" /><path class="m-eq" d="M120 70h60v110l-30 30-30-30z" /><path class="m-eq" d="M190 70h60v110l-30 30-30-30z" />
+    <path class="m-level" d="M54 120h52v58l-26 26-26-26z" /><path class="m-level" d="M194 150h52v28l-26 26-26-26z" />
+    <path class="m-pipe" d="M80 210v40M150 210v40M220 210v40M70 250h300" /><path class="m-flow" d="M70 250h300" />
+    <rect class="m-eq" x="370" y="210" width="90" height="70" rx="6" /><circle class="m-thin" cx="415" cy="245" r="20" /><path class="m-thin" d="M401 245h28M415 231v28" />
+    <path class="m-pipe" d="M460 245h40" /><path class="m-flow" d="M460 245h40" />
+    <circle class="m-eq" cx="530" cy="245" r="30" /><circle class="m-thin" cx="530" cy="245" r="12" />
+    <path class="m-pipe" d="M560 245h30v40" /><rect class="m-eq" x="570" y="285" width="40" height="30" rx="3" />
+    <g class="m-inst"><path d="M415 210v-40" /><circle cx="415" cy="152" r="18" /><text x="415" y="149">WT</text><text x="415" y="161">{n(0)}</text></g>
+    <g class="m-inst"><path d="M530 215v-45" /><circle cx="530" cy="152" r="18" /><text x="530" y="149">TT</text><text x="530" y="161">{n(1)}</text></g>
+    <g class="m-inst"><path d="M290 250v-60" /><circle cx="290" cy="172" r="18" /><text x="290" y="169">SC</text><text x="290" y="181">{n(2)}</text></g>
+  </g>)}
+
+  {sector === 'software' && (<g>
+    <rect class="m-eq" x="120" y="70" width="400" height="230" rx="10" />
+    <path class="m-thin" d="M120 104h400" /><circle class="m-led" cx="142" cy="87" r="5" />
+    <path class="m-pipe" d="M150 140l20 16-20 16" /><path class="m-flow" d="M186 172h120" />
+    <path class="m-thin" d="M150 206h220M150 232h160M150 258h200" />
+  </g>)}
+</svg>

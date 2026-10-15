@@ -21,3 +21,15 @@
 - Öne çıkan 6 referans (büyüklük/uluslararası): Ürgenç 5 t/h tuz, Çanakkale asit geri kazanım, Turda 12 t/h tuz, Alaşehir 12,30 MWe JES, Ağsu yem fabrikası, Kırıkkale 840 MW santral.
 - Hakkımda metni CV'den çevrildi; kişisel bilgiler (doğum tarihi, medeni hal, telefon) yayınlanmadı.
 - **Kullanıcıdan beklenen:** referans fotoğrafları ve kapsam ayrıntıları (PLC/SCADA markaları, I/O sayısı vb.), müşteri adı izinleri, portre, rol doğrulaması, deneyim yılı ifadesi (prompt 15 yıl, CV 10 yıl; sitede 2013'ten hesaplanıyor: "13+ yıl").
+
+### Kullanıcı yanıtı sonrası (aynı gün)
+- Deneyim: 15 yıl → `SITE.since = 2011`; metinlerde `{years}` ile hesaplanır. Konum: Bursa.
+- Şu an: Yıldırım Kimya (Yıldırım Tuz Kimya San. ve Tic. A.Ş., Bursa) — elektrik ve otomasyon sorumlusu. Sistemas'taki son proje CN/MN granül ve pastil üretim tesisi (müşteri Yıldırım Kimya) referanslara eklendi (21 proje).
+- Müşteri adları kullanıcı izniyle eklendi (CV'de geçenler): TPAO, Eti Maden, Atlas Enerji, Gama & Idom, İZSU, Hamitabat A.Ş., Wabag, AgroPark, Şenpiliç, İÇDAŞ, Yıldırım Kimya.
+- Marka belirtilmeyen tüm projelere kullanıcı talimatıyla "Siemens S7-1500" + "WinCC Runtime Professional"; kapsamlara PLC, SCADA, devreye alma eklendi.
+- MAP tesisi (CV'de 2020-02, Geotek–Sistemas arası boşlukta): kullanıcı "yalnız tarihi düzenle" dedi → ay kaldırıldı, yıl 2020, rol Sistemas.
+- İşveren siteleri: Sistemas → sistemasteknoloji.com (arama motorunda güncel), Yıldırım Kimya → yildirimkimya.com.tr. Geotek (geotekotomasyon.com) ve Espro (esprootomasyon.com.tr) yayında olduğu doğrulanamadı → bağlantı konmadı. Bu ortamdan dış sitelere erişim kapalı.
+- LinkedIn: ağ politikası engelli (linkedin.com, media.licdn.com); profil ve portre alınamadı.
+- Fotoğraf yerine: projeye özel SCADA mimik tarzı şematik çizim (`Mimic.astro`, 6 sektör, etiketli) + derlemede üretilen proje haritası (`ProjectMap.astro`, Natural Earth/world-atlas, d3-geo; betik yok). Referans listesinde `?place=` ile konum süzgeci.
+- **Yer tutucu (kullanıcı onayı bekliyor):** CN/MN projesi yılı 2025 ve Sistemas bitişi 2025 tahmini; Yıldırım Kimya başlangıç tarihi boş.
+- Lighthouse (yerel, mobil): /, /referanslar/, detay → 95–100 / 100 / 100 / 100.

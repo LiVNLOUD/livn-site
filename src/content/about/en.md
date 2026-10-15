@@ -1,10 +1,18 @@
 ---
 title: About
-lead: I work in electrical and automation, with a focus on commissioning in the field. I own a project from design through to commissioning.
+lead: For {years} years I have worked in electrical and automation, with a focus on commissioning in the field. Today I am the electrical & automation lead at Yıldırım Kimya.
 experience:
+  - role: Electrical & automation lead
+    company: Yıldırım Kimya
+    url: https://www.yildirimkimya.com.tr
+    location: Bursa
+    points:
+      - My last project at Sistemas was the CN/MN (calcium and magnesium nitrate) granule and pastille production plant built for Yıldırım Kimya. After the project I joined the client company.
   - from: "2020-10"
+    to: "2025"
     role: Electrical & automation lead
     company: Sistemas
+    url: https://www.sistemasteknoloji.com
     location: Izmir
     points:
       - Managed the design, installation and maintenance of electrical and automation systems for turnkey chemical plants.
@@ -52,4 +60,4 @@ languages:
 
 I am an automation technician who knows industrial automation processes and what the field needs. I design HMI interfaces, test scripts and protocols, and I build, run, test and troubleshoot automated systems for industrial processes.
 
-I have worked across sectors — from water and wastewater treatment to power plants, food facilities, chemical plants and salt refineries — on projects in Türkiye, Azerbaijan, Romania and Uzbekistan.
+I have worked across sectors — from water and wastewater treatment to power plants, food facilities, chemical plants and salt refineries — on projects in Türkiye, Azerbaijan, Romania and Uzbekistan. On the PLC side I mostly work with Siemens S7-1500, and on SCADA with WinCC Runtime Professional.

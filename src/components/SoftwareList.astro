@@ -21,7 +21,7 @@ const status = { active: ui.statusActive, dev: ui.statusDev, archived: ui.status
     <div class="cards">
       {items.map((s) => (
         <article class="card">
-          <div class="card-media"><Media cover={s.data.cover} sector="software" label={s.data.platform} /></div>
+          <div class="card-media"><Media cover={s.data.cover} sector="software" seed={slugOf(s.id)} caption={s.data.platform} /></div>
           <div class="card-body">
             <p class="meta">{s.data.version && <span>v{s.data.version}</span>}<span class={`badge badge-${s.data.status}`}>{status[s.data.status]}</span></p>
             <h2 class="h3"><a href={P.softwareItem(slugOf(s.id))}>{s.data.title}</a></h2>

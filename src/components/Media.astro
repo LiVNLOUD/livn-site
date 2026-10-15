@@ -1,16 +1,23 @@
 ---
-// Kapak görseli varsa optimize edilmiş görsel, yoksa sektör çizimi
+// Kapak görseli varsa optimize edilmiş görsel; yoksa projeye özel şematik çizim
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import SectorIcon from './SectorIcon.astro';
-interface Props { cover?: { src: ImageMetadata; alt: string }; sector: string; label?: string; widths?: number[]; sizes?: string; eager?: boolean }
-const { cover, sector, label, widths = [400, 640, 960], sizes = '(min-width: 1000px) 360px, (min-width: 640px) 50vw, 100vw', eager = false } = Astro.props;
+import Mimic from './Mimic.astro';
+interface Props {
+  cover?: { src: ImageMetadata; alt: string };
+  sector: string;
+  seed?: string;
+  caption?: string;
+  tag?: string;
+  live?: boolean;
+  widths?: number[];
+  sizes?: string;
+  eager?: boolean;
+}
+const { cover, sector, seed, caption, tag, live = false, widths = [400, 640, 960], sizes = '(min-width: 1000px) 360px, (min-width: 640px) 50vw, 100vw', eager = false } = Astro.props;
 ---
 {cover ? (
   <Picture src={cover.src} alt={cover.alt} widths={widths} sizes={sizes} formats={['avif', 'webp']} loading={eager ? 'eager' : 'lazy'} decoding="async" />
 ) : (
-  <div class="plate">
-    <SectorIcon sector={sector} />
-    {label && <span class="plate-label">{label}</span>}
-  </div>
+  <div class="plate"><Mimic sector={sector} seed={seed} caption={caption} tag={tag} live={live} /></div>
 )}

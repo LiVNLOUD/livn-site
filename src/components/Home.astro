@@ -3,7 +3,8 @@ import Base from '../layouts/Base.astro';
 import CopyCommand from './CopyCommand.astro';
 import ReferenceCard from './ReferenceCard.astro';
 import SectorIcon from './SectorIcon.astro';
-import { SITE, type Lang } from '../site';
+import ProjectMap from './ProjectMap.astro';
+import { SITE, withYears, type Lang } from '../site';
 import { SECTORS } from '../content.config';
 import { t, PATHS, SECTOR_LABELS } from '../i18n';
 import { getReferences, getSoftware, slugOf } from '../content-utils';
@@ -38,15 +39,15 @@ const caps = {
     { h: 'Site coordination', p: 'Working with multidisciplinary teams through installation and start-up; standards and safety compliance.' },
   ],
 }[lang];
-const ym = (y: number, m?: number) => `${y}·${String(m ?? 0).padStart(2, '0')}`;
+const ym = (y: number, m?: number) => (m ? `${y}·${String(m).padStart(2, '0')}` : String(y));
 ---
-<Base lang={lang} description={intro.description}>
+<Base lang={lang} description={withYears(intro.description)}>
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <p class="eyebrow"><span class="led" aria-hidden="true"></span>{intro.eyebrow} · {SITE.location[lang]}</p>
         <h1>{intro.title}</h1>
-        <p class="lead">{intro.lead}</p>
+        <p class="lead">{withYears(intro.lead)}</p>
         <div class="btns">
           <a class="btn btn-primary" href={P.references}>{ui.ctaReferences}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
@@ -60,7 +61,7 @@ const ym = (y: number, m?: number) => `${y}·${String(m ?? 0).padStart(2, '0')}`
           <ol>
             {log.map((r) => (
               <li><a href={P.reference(slugOf(r.id))}>
-                <time datetime={`${r.data.year}-${String(r.data.month ?? 1).padStart(2, '0')}`}>{ym(r.data.year, r.data.month)}</time>
+                <time datetime={r.data.month ? `${r.data.year}-${String(r.data.month).padStart(2, '0')}` : String(r.data.year)}>{ym(r.data.year, r.data.month)}</time>
                 <span class="name">{r.data.title}</span>
                 <span class="cc">{r.data.country}</span>
               </a></li>
@@ -77,7 +78,7 @@ const ym = (y: number, m?: number) => `${y}·${String(m ?? 0).padStart(2, '0')}`
       <div><dt>{ui.statReferences}</dt><dd>{refs.length}</dd></div>
       <div><dt>{ui.statSectors}</dt><dd>{sectorCounts.length}</dd></div>
       <div><dt>{ui.statCountries}</dt><dd>{countries}</dd></div>
-      <div><dt>{ui.statSince} ({SITE.since}–)</dt><dd>{yearsInField}+ {lang === 'tr' ? 'yıl' : 'yrs'}</dd></div>
+      <div><dt>{ui.statSince} ({SITE.since}–)</dt><dd>{yearsInField} {lang === 'tr' ? 'yıl' : 'yrs'}</dd></div>
     </dl>
   </div>
 
@@ -92,11 +93,21 @@ const ym = (y: number, m?: number) => `${y}·${String(m ?? 0).padStart(2, '0')}`
     </div>
   </section>
 
+  <section class="section" aria-labelledby="map-h">
+    <div class="wrap">
+      <div class="section-head">
+        <div><p class="kicker">02</p><h2 id="map-h">{ui.mapTitle}</h2><p>{ui.mapLead}</p></div>
+        <a class="more" href={P.references}>{ui.allReferences}</a>
+      </div>
+      <ProjectMap refs={refs} lang={lang} />
+    </div>
+  </section>
+
   {featured.length > 0 && (
     <section class="section" aria-labelledby="feat-h">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="kicker">02</p><h2 id="feat-h">{ui.featuredTitle}</h2></div>
+          <div><p class="kicker">03</p><h2 id="feat-h">{ui.featuredTitle}</h2></div>
           <a class="more" href={P.references}>{ui.allReferences}</a>
         </div>
         <div class="cards cards-3">{featured.map((r) => <ReferenceCard entry={r} lang={lang} />)}</div>
@@ -107,7 +118,7 @@ const ym = (y: number, m?: number) => `${y}·${String(m ?? 0).padStart(2, '0')}`
   {sectorCounts.length > 0 && (
     <section class="section" aria-labelledby="sec-h">
       <div class="wrap">
-        <div class="section-head"><div><p class="kicker">03</p><h2 id="sec-h">{ui.sectorsTitle}</h2></div></div>
+        <div class="section-head"><div><p class="kicker">04</p><h2 id="sec-h">{ui.sectorsTitle}</h2></div></div>
         <div class="sectors">
           {sectorCounts.map(({ s, n }) => (
             <a class="sector-tile" href={`${P.references}?sector=${s}`}>
@@ -125,7 +136,7 @@ const ym = (y: number, m?: number) => `${y}·${String(m ?? 0).padStart(2, '0')}`
     <section class="section" aria-labelledby="sw-h">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="kicker">04</p><h2 id="sw-h">{ui.softwareTitle}</h2><p>{ui.softwareLead}</p></div>
+          <div><p class="kicker">05</p><h2 id="sw-h">{ui.softwareTitle}</h2><p>{ui.softwareLead}</p></div>
           <a class="more" href={P.software}>{ui.nav.software}</a>
         </div>
         <div class="feature">

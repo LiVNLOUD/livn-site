@@ -1,14 +1,17 @@
 ---
-title: "Türkeli atıksu arıtma tesisi"
-summary: "Türkeli atıksu arıtma tesisinin otomasyon işleri."
+title: "Türkeli Atıksu Arıtma Tesisi"
+summary: "Türkeli atıksu arıtma tesisinin otomasyon sistemi."
 year: 2017
 month: 5
 location: "İzmir"
 country: TR
+coords: [38.42, 27.14]   # enlem, boylam (harita için)
 sector: water
-scope: [automation]
+scope: [plc, scada, commissioning, automation]
+technologies: ["Siemens S7-1500", "WinCC Runtime Professional"]
 role: "Otomasyon uzmanı"
-# Görsel eklemek için: görseli bu klasöre yükleyin ve aşağıdaki satırları açın (README → Görseller)
+# Fotoğraf eklemek için: görseli bu klasöre yükleyin ve aşağıdaki satırları açın (README → Görseller).
+# Fotoğraf yoksa sitede projeye özel şematik çizim gösterilir.
 # cover: { src: ./kapak.jpg, alt: "Görselin kısa açıklaması" }
 # gallery:
 #   - { src: ./1.jpg, alt: "Açıklama" }

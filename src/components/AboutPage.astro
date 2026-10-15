@@ -3,7 +3,7 @@ import { getEntry, render } from 'astro:content';
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Base from '../layouts/Base.astro';
-import { SITE, otherLang, type Lang } from '../site';
+import { SITE, otherLang, withYears, type Lang } from '../site';
 import { t, PATHS, formatPeriod } from '../i18n';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -17,12 +17,12 @@ const { Content } = await render(entry);
 const portraits = import.meta.glob<{ default: ImageMetadata }>('../assets/portre.{jpg,jpeg,png,webp}', { eager: true });
 const portrait = Object.values(portraits)[0]?.default;
 ---
-<Base lang={lang} title={d.title} description={d.lead} altPath={PATHS[otherLang(lang)].about}>
+<Base lang={lang} title={d.title} description={withYears(d.lead)} altPath={PATHS[otherLang(lang)].about}>
   <div class="wrap">
     <header class="page-head">
       <p class="crumbs"><a href={P.home}>{ui.home}</a> / {ui.nav.about}</p>
       <h1>{SITE.name}</h1>
-      <p class="lead">{d.lead}</p>
+      <p class="lead">{withYears(d.lead)}</p>
     </header>
     <div class="about-grid">
       <div>
@@ -31,9 +31,15 @@ const portrait = Object.values(portraits)[0]?.default;
         <ol class="timeline">
           {d.experience.map((x) => (
             <li>
-              <span class="period">{formatPeriod(x.from, lang)} – {x.to ? formatPeriod(x.to, lang) : ui.present}</span>
+              <span class="period">{x.from ? `${formatPeriod(x.from, lang)} – ` : ''}{x.to ? formatPeriod(x.to, lang) : ui.present}</span>
               <h3>{x.role}</h3>
-              {(x.company || x.location) && <p class="org">{[x.company, x.location].filter(Boolean).join(' · ')}</p>}
+              {(x.company || x.location) && (
+                <p class="org">
+                  {x.company && (x.url ? <a href={x.url} rel="noopener">{x.company}</a> : x.company)}
+                  {x.company && x.location && ' · '}
+                  {x.location}
+                </p>
+              )}
               {x.points.length > 0 && <ul>{x.points.map((p) => <li>{p}</li>)}</ul>}
             </li>
           ))}

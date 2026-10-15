@@ -1,0 +1,81 @@
+---
+// Proje haritası: derleme sırasında SVG olarak üretilir (betik ve dış kaynak yok).
+// Harita verisi: Natural Earth (kamu malı), world-atlas paketi üzerinden.
+import { geoMercator, geoPath } from 'd3-geo';
+import { feature } from 'topojson-client';
+import type { FeatureCollection, Geometry } from 'geojson';
+import world from 'world-atlas/countries-50m.json';
+import type { CollectionEntry } from 'astro:content';
+import type { Lang } from '../site';
+import { PATHS, countryName } from '../i18n';
+import { slugOf } from '../content-utils';
+
+interface Props { refs: CollectionEntry<'references'>[]; lang: Lang; compact?: boolean }
+const { refs, lang, compact = false } = Astro.props;
+
+const W = 1000;
+const H = compact ? 380 : 440;
+// Görünen bölge: Romanya'dan Özbekistan'a
+const region = { type: 'MultiPoint' as const, coordinates: [[21.5, 35.6], [65.5, 47.4]] };
+const projection = geoMercator().fitExtent([[24, 24], [W - 24, H - 24]], region).clipExtent([[0, 0], [W, H]]);
+const path = geoPath(projection).digits(1);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const countries = feature(world as any, (world as any).objects.countries) as unknown as FeatureCollection<Geometry, { name: string }>;
+const ID: Record<string, string> = { '792': 'TR', '642': 'RO', '031': 'AZ', '860': 'UZ' };
+const used = new Set(refs.map((r) => r.data.country));
+const shapes = countries.features
+  .map((f) => ({ d: path(f) ?? '', code: ID[String(f.id)] }))
+  .filter((s) => s.d.length > 0)
+  .map((s) => ({ ...s, hl: !!s.code && used.has(s.code) }));
+
+// Aynı konumdaki projeler tek noktada toplanır
+const groups = new Map<string, CollectionEntry<'references'>[]>();
+for (const r of refs) {
+  if (!r.data.coords) continue;
+  const key = r.data.coords.join(',');
+  groups.set(key, [...(groups.get(key) ?? []), r]);
+}
+const P = PATHS[lang];
+const dots = [...groups.values()].map((list) => {
+  const [lat, lon] = list[0].data.coords!;
+  const [x, y] = projection([lon, lat]) ?? [0, 0];
+  const place = list[0].data.location.split(',')[0];
+  return {
+    x: Math.round(x * 10) / 10,
+    y: Math.round(y * 10) / 10,
+    n: list.length,
+    href: list.length === 1 ? P.reference(slugOf(list[0].id)) : `${P.references}?place=${encodeURIComponent(place)}`,
+    label: list.length > 1 ? `${place} (${list.length}): ${list.map((r) => r.data.title).join(' · ')}` : `${place}: ${list[0].data.title}`,
+  };
+}).sort((a, b) => a.n - b.n);
+
+// Ülke adları (elle yerleştirildi; noktaların üstüne binmesin diye)
+const labelAt: Record<string, [number, number]> = { TR: [32.6, 38.2], RO: [25.6, 44.7], AZ: [47.2, 41.9], UZ: [60.8, 43.2] };
+const labels = [...used].filter((c) => labelAt[c]).map((c) => {
+  const [lon, lat] = labelAt[c];
+  const [x, y] = projection([lon, lat]) ?? [0, 0];
+  return { x: Math.round(x), y: Math.round(y), text: countryName(c, lang).toLocaleUpperCase(lang === 'tr' ? 'tr-TR' : 'en-GB') };
+});
+const ariaLabel = lang === 'tr' ? 'Proje konumları haritası' : 'Map of project locations';
+---
+<figure class:list={['map', { 'map-compact': compact }]}>
+  <svg viewBox={`0 0 ${W} ${H}`} role="group" aria-label={ariaLabel}>
+    <g aria-hidden="true">
+      {shapes.map((s) => <path d={s.d} class={s.hl ? 'map-land map-hl' : 'map-land'} />)}
+      {labels.map((l) => <text x={l.x} y={l.y} class="map-label" text-anchor="middle">{l.text}</text>)}
+    </g>
+    {dots.map((d, i) => (
+      <a href={d.href} class="map-dot" aria-label={d.label}>
+        <title>{d.label}</title>
+        <circle class={`map-pulse p${i % 5}`} cx={d.x} cy={d.y} r={6 + Math.min(d.n - 1, 4) * 2} />
+        <circle class="map-pt" cx={d.x} cy={d.y} r={6 + Math.min(d.n - 1, 4) * 2} />
+        {d.n > 1 && <text x={d.x} y={d.y + 4} text-anchor="middle" class="map-n" aria-hidden="true">{d.n}</text>}
+      </a>
+    ))}
+  </svg>
+  <figcaption>
+    <span>{lang === 'tr' ? 'Nokta üzerine gelin ya da tıklayın.' : 'Hover or click a point.'}</span>
+    <span class="map-src">{lang === 'tr' ? 'Harita verisi: Natural Earth' : 'Map data: Natural Earth'}</span>
+  </figcaption>
+</figure>

@@ -47,6 +47,8 @@ const references = defineCollection({
       location: z.string(),
       // ISO ülke kodu: TR, AZ, RO, UZ…
       country: z.string().regex(/^[A-Z]{2}$/, 'country iki büyük harf olmalı (TR, AZ…)'),
+      // Harita konumu: [enlem, boylam] (ör. [38.42, 27.14] İzmir). Boşsa haritada görünmez.
+      coords: z.tuple([z.number().min(-90).max(90), z.number().min(-180).max(180)]).optional(),
       sector: z.enum(SECTORS),
       scope: z.array(z.enum(SCOPES)).min(1),
       // Kullanılan ürün/yazılım adları (marka logosu değil, yalnız ad)
@@ -104,10 +106,12 @@ const about = defineCollection({
     lead: z.string(),
     experience: z.array(
       z.object({
-        from: z.string().regex(/^\d{4}(-\d{2})?$/),
+        // Başlangıç bilinmiyorsa boş bırakılabilir
+        from: z.string().regex(/^\d{4}(-\d{2})?$/).optional(),
         to: z.string().regex(/^\d{4}(-\d{2})?$/).optional(),
         role: z.string(),
         company: z.string().optional(),
+        url: z.string().url().optional(),
         location: z.string().optional(),
         points: z.array(z.string()).default([]),
       }),

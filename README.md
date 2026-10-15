@@ -33,12 +33,13 @@ year: 2024
 month: 8                                  # isteğe bağlı (1–12)
 location: "İzmir"
 country: TR                               # TR, AZ, RO, UZ… (iki büyük harf)
+coords: [38.42, 27.14]                    # enlem, boylam: proje haritasındaki nokta (Google Haritalar'da sağ tık → koordinat)
 sector: water                             # water | energy | process | mining | oil-gas | food
 scope: [plc, scada, commissioning]        # electrical, automation, plc, scada, hmi, instrumentation,
                                           # panel, engineering, commissioning, monitoring, modernization, subcontract
-technologies: ["Siemens S7-1500", "WinCC"] # isteğe bağlı; yalnız ad, logo yok
+technologies: ["Siemens S7-1500", "WinCC Runtime Professional"] # yalnız ad, logo yok
 role: "Otomasyon uzmanı"                   # isteğe bağlı
-client: "Müşteri A.Ş."                      # İSTEĞE BAĞLI — yalnız müşterinin izni varsa
+client: "Müşteri A.Ş."                      # isteğe bağlı; detay sayfasında "Müşteri" satırı
 featured: true                            # ana sayfada öne çıkar (en fazla 6 gösterilir)
 cover: { src: ./kapak.jpg, alt: "Pano içinden genel görünüm" }
 gallery:
@@ -50,13 +51,13 @@ draft: false                              # true ise yayınlanmaz
 İsteğe bağlı açıklama metni: projenin amacı, yapılan iş, zorluklar, sonuç…
 ```
 
-**Kurallar:** `year`, `month`, `country`, `sector`, `scope`, `featured`, `draft` alanları ve görsel sayısı `tr.md` ile `en.md`'de aynı olmalıdır (farklıysa derleme durur). Yalnız metinler (`title`, `summary`, `location`, `role`, `alt`, gövde) çevrilir.
+**Kurallar:** `year`, `month`, `country`, `coords`, `sector`, `scope`, `featured`, `draft` alanları ve görsel sayısı `tr.md` ile `en.md`'de aynı olmalıdır (farklıysa derleme durur). Yalnız metinler (`title`, `summary`, `location`, `role`, `alt`, gövde) çevrilir.
 
 ### Görseller
 
 - Biçim: JPG, PNG veya WebP. Telefon fotoğrafı olduğu gibi yüklenebilir; site derlenirken küçültülür, AVIF/WebP'ye çevrilir ve gerekene kadar yüklenmez.
 - Her görselin `alt` açıklaması **zorunludur** (görme engelliler ve arama motorları için; en az 3 karakter).
-- Önerilen kapak oranı 16:9. Kapak yoksa sektörün çizimi gösterilir.
+- Önerilen kapak oranı 16:9. Kapak yoksa tesis türünün **şematik çizimi** (SCADA mimik ekranı tarzında, "Şematik çizim" etiketli) gösterilir; enstrüman etiket numaraları projeye göre değişir. Çizimler `src/components/Mimic.astro` içindedir.
 - Telifli görsel, marka ya da müşteri logosu kullanmayın. Fotoğrafta müşteri adı, plaka veya kişi yüzü görünüyorsa önce kırpın.
 - Referansın kapağı, sosyal medyada paylaşıldığında önizleme görseli de olur.
 

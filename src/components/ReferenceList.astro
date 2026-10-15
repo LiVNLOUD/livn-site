@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import SectorIcon from './SectorIcon.astro';
+import ProjectMap from './ProjectMap.astro';
 import { SITE, otherLang, type Lang } from '../site';
 import { SECTORS } from '../content.config';
 import { t, PATHS, SECTOR_LABELS, formatMonth } from '../i18n';
@@ -22,6 +23,8 @@ const countText = { tr: '{n} proje gösteriliyor', en: 'Showing {n} projects' }[
       <p class="lead">{ui.referencesLead}</p>
     </header>
 
+    <ProjectMap refs={refs} lang={lang} compact />
+    <div class="section-gap"></div>
     <fieldset class="filters" data-filters hidden>
       <legend>{ui.filterLabel}</legend>
       <button type="button" class="chip" data-sector="" aria-pressed="true">{ui.filterAll}<span class="n">{refs.length}</span></button>
@@ -29,11 +32,12 @@ const countText = { tr: '{n} proje gösteriliyor', en: 'Showing {n} projects' }[
         <button type="button" class="chip" data-sector={s} aria-pressed="false">{SECTOR_LABELS[lang][s]}<span class="n">{n}</span></button>
       ))}
     </fieldset>
+    <p class="place-note" data-place-note data-template={ui.placeFilter('{p}')} hidden><strong data-place-text></strong><button type="button" class="chip" data-place-clear>{ui.filterAll}</button></p>
     <p class="count" role="status" data-count data-template={countText}></p>
 
     <ul class="rows">
       {refs.map((r) => (
-        <li data-sector={r.data.sector}>
+        <li data-sector={r.data.sector} data-place={r.data.location.split(',')[0]}>
           <a class="row" href={P.reference(slugOf(r.id))}>
             <span class="ico"><SectorIcon sector={r.data.sector} /></span>
             <span class="t">{r.data.title}</span>
@@ -55,21 +59,31 @@ const countText = { tr: '{n} proje gösteriliyor', en: 'Showing {n} projects' }[
   const box = document.querySelector<HTMLElement>('[data-filters]');
   const count = document.querySelector<HTMLElement>('[data-count]');
   const rows = [...document.querySelectorAll<HTMLElement>('.rows > li')];
+  const note = document.querySelector<HTMLElement>('[data-place-note]');
+  let place = new URLSearchParams(location.search).get('place') ?? '';
   if (box && count) {
     const chips = [...box.querySelectorAll<HTMLButtonElement>('.chip')];
     const apply = (sector: string, push: boolean) => {
       if (!chips.some((c) => c.dataset.sector === sector)) sector = '';
+      if (sector) place = '';
       let n = 0;
-      for (const r of rows) { const show = !sector || r.dataset.sector === sector; r.hidden = !show; if (show) n++; }
+      for (const r of rows) { const show = (!sector || r.dataset.sector === sector) && (!place || r.dataset.place === place); r.hidden = !show; if (show) n++; }
+      if (note) {
+        note.hidden = !place;
+        const txt = note.querySelector('[data-place-text]');
+        if (txt) txt.textContent = (note.dataset.template ?? '{p}').replace('{p}', place);
+      }
       for (const c of chips) c.setAttribute('aria-pressed', String(c.dataset.sector === sector));
       count.textContent = (count.dataset.template ?? '{n}').replace('{n}', String(n));
       if (push) {
         const url = new URL(location.href);
         if (sector) url.searchParams.set('sector', sector); else url.searchParams.delete('sector');
+        if (!place) url.searchParams.delete('place');
         history.replaceState(null, '', url);
       }
     };
     for (const c of chips) c.addEventListener('click', () => apply(c.dataset.sector ?? '', true));
+    note?.querySelector('[data-place-clear]')?.addEventListener('click', () => { place = ''; apply('', true); });
     box.hidden = false;
     apply(new URLSearchParams(location.search).get('sector') ?? '', false);
   }

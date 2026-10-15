@@ -80,3 +80,5 @@
 - Neden: kullanıcının sisteminde "hareketi azalt" (Windows → Animasyon efektleri kapalı) açık; site bu sinyalde tüm animasyonları kapatıyordu.
 - Çözüm: `<html class="motion">` sınıfı (public/theme.js): sitedeki "Animasyonlar" düğmesi > sistem ayarı; seçim localStorage'da. CSS'teki tüm hareket kuralları `:root.motion` altında.
 - HMI değerleri/trend ve sayaçlar artık her durumda çalışır (veri değişimi, hareket değil). Açılış, akış, dönme, kaydırma animasyonları ve harita otomatik oynatma yalnız `motion` ile.
+- Ek bulgu: Cloudflare tarayıcı önbelleği `/theme.js` dosyasını 4 saat tutuyordu (eski betik + yeni HTML riski). Betik `src/scripts/theme-boot.js` oldu, `/_astro/theme-boot.[hash].js` olarak sunuluyor (değişince adı da değişir).
+- Yeni düğme `.theme-btn` sınıfını paylaştığı için tema düğmesi bir süre gizli kaldı; seçici düzeltildi. Canlıda doğrulandı: "hareketi azalt" açıkken düğme kapalı başlar, tıklayınca akış/harita/açılış çalışır; tema düğmesi görünür.

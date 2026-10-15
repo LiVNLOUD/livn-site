@@ -59,7 +59,9 @@ Görseli `public/img/` klasörüne koyun, Markdown içinde `![Açıklama](/img/d
 
 ## Değişikliği yayınlamak
 
-En kolay yol GitHub'ın web arayüzü: dosyayı GitHub'da açıp düzenleyin veya *Add file* ile ekleyin, *Commit changes* deyin. Cloudflare siteyi birkaç dakika içinde kendiliğinden yeniden derleyip yayınlar. Derleme hata verirse eski site yayında kalır; hata Cloudflare panelinde *Workers & Pages → (proje) → Deployments* altında görünür.
+Site, Cloudflare Pages'teki `livn` projesi tarafından GitHub'daki `LiVNLOUD/livn-site` deposundan derlenir. GitHub'da bir dosyayı düzenleyip *Commit changes* dediğinizde Cloudflare birkaç dakika içinde siteyi kendiliğinden yeniden derleyip yayınlar. Derleme hata verirse eski site yayında kalır; hata Cloudflare panelinde *Workers & Pages → livn → Deployments* altında görünür.
+
+Not: Depoda dosyalar şu an `livn-site/` alt klasöründedir ve Cloudflare'de *Root directory* = `livn-site` ayarlıdır. Dosyalar depo köküne taşınırsa bu ayar boşaltılmalıdır.
 
 ## Bilgisayarda önizleme (isteğe bağlı)
 
